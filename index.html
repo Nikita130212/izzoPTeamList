@@ -6,7 +6,6 @@
     <title>ITDL · IzzoP Team Demon List</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Все стили такие же как в предыдущей версии */
         :root {
             --bg-body: #0b0d15;
             --bg-surface: #1a1e2b;
@@ -763,8 +762,8 @@
                     <button class="btn" id="navLeaderboardBtn"><i class="fas fa-trophy"></i> Лидерборд</button>
                 </div>
                 <div class="auth-section" id="authSection">
-                    <input type="text" id="loginInput" placeholder="Логин" value="admin">
-                    <input type="password" id="passInput" placeholder="Пароль" value="123">
+                    <input type="text" id="loginInput" placeholder="Логин">
+                    <input type="password" id="passInput" placeholder="Пароль">
                     <button class="btn btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Вход</button>
                     <button class="btn btn-outline" id="registerBtn"><i class="fas fa-user-plus"></i> Регистрация</button>
                     <button class="btn btn-outline" id="logoutBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Выйти</button>
@@ -890,17 +889,17 @@
             "use strict";
 
             // ============================================
-            // 1. КОНФИГУРАЦИЯ GITHUB (опционально)
+            // 1. КОНФИГУРАЦИЯ GITHUB
             // ============================================
             const GITHUB_CONFIG = {
                 owner: 'Nikita130212',
                 repo: 'izzoPTeamList',
-                token: 'github_pat_11BQOPK4A0uFv8yMm4TQHX_3s4V9pL5qR7wX2yZ1aBcDeFgHiJkLmNoPqRsTuVwX',
+                token: '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',
                 issueNumber: 1
             };
 
             // ============================================
-            // 2. РАБОТА С GITHUB API (с обработкой ошибок)
+            // 2. РАБОТА С GITHUB API
             // ============================================
             class GitHubDB {
                 constructor(config) {
@@ -915,14 +914,12 @@
                 async load() {
                     try {
                         const response = await fetch(this.apiUrl, { headers: this.headers });
-                        if (!response.ok) {
-                            console.warn(`GitHub load: HTTP ${response.status}`);
-                            return null;
-                        }
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
                         const data = await response.json();
-                        return JSON.parse(data.body || '{}');
+                        const body = data.body || '{}';
+                        return JSON.parse(body);
                     } catch (e) {
-                        console.warn('GitHub load error:', e.message);
+                        console.error('GitHub load error:', e);
                         return null;
                     }
                 }
@@ -935,13 +932,10 @@
                             headers: { ...this.headers, 'Content-Type': 'application/json' },
                             body: JSON.stringify({ body })
                         });
-                        if (!response.ok) {
-                            console.warn(`GitHub save: HTTP ${response.status}`);
-                            return null;
-                        }
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
                         return await response.json();
                     } catch (e) {
-                        console.warn('GitHub save error:', e.message);
+                        console.error('GitHub save error:', e);
                         return null;
                     }
                 }
@@ -964,7 +958,7 @@
             // ============================================
             // 4. РАБОТА С LOCALSTORAGE (КЭШ)
             // ============================================
-            const CACHE_KEY = 'itdl_data_v3';
+            const CACHE_KEY = 'itdl_data_v2';
 
             function saveToCache(data) {
                 try {
@@ -980,7 +974,7 @@
             }
 
             // ============================================
-            // 5. ЗАГРУЗКА/СОХРАНЕНИЕ (с гарантированным admin)
+            // 5. ЗАГРУЗКА/СОХРАНЕНИЕ
             // ============================================
             function getDefaultData() {
                 return {
@@ -1016,14 +1010,8 @@
             async function loadData() {
                 updateSyncStatus('syncing', 'Загрузка...');
                 
-                let data = null;
-                
                 // Пробуем загрузить с GitHub
-                try {
-                    data = await db.load();
-                } catch (e) {
-                    console.warn('GitHub не доступен');
-                }
+                let data = await db.load();
                 
                 if (data) {
                     // Успешно загружено с GitHub
@@ -1066,9 +1054,6 @@
 
                 renderAll();
                 updateAuthUI();
-                
-                console.log('📊 Загружено пользователей:', users.length);
-                console.log('👑 Админ:', users.find(u => u.isAdmin)?.username || 'не найден');
             }
 
             async function saveData() {
@@ -1077,16 +1062,31 @@
                 // Сохраняем в кэш всегда
                 saveToCache(data);
                 
-                // Пробуем сохранить на GitHub (без блокировки)
-                try {
-                    await db.save(data);
-                    updateSyncStatus('synced', 'Синхронизировано');
-                } catch (e) {
-                    console.warn('GitHub save error:', e.message);
-                    updateSyncStatus('error', 'Только локально');
+                // Пробуем сохранить на GitHub
+                if (!isSyncing) {
+                    isSyncing = true;
+                    updateSyncStatus('syncing', 'Сохранение...');
+                    
+                    const result = await db.save(data);
+                    
+                    if (result) {
+                        updateSyncStatus('synced', 'Синхронизировано');
+                        showToast('✅ Данные сохранены на GitHub');
+                    } else {
+                        updateSyncStatus('error', 'Ошибка синхронизации');
+                        showToast('⚠️ Данные сохранены локально');
+                    }
+                    
+                    isSyncing = false;
                 }
 
                 renderAll();
+            }
+
+            async function syncData() {
+                if (isSyncing) return;
+                await loadData();
+                showToast('🔄 Данные синхронизированы');
             }
 
             // ============================================
@@ -1145,7 +1145,7 @@
             }
 
             // ============================================
-            // 7. РЕНДЕРИНГ (упрощенный для краткости)
+            // 7. РЕНДЕРИНГ
             // ============================================
             function renderTable() {
                 const tbody = document.getElementById('levelTableBody');
@@ -1190,6 +1190,7 @@
                 });
                 tbody.innerHTML = html;
 
+                // Клик по уровню
                 document.querySelectorAll('.level-name, .video-thumb').forEach(el => {
                     el.addEventListener('click', function() {
                         const id = this.dataset.id || this.closest('[data-id]')?.dataset.id;
@@ -1197,6 +1198,7 @@
                     });
                 });
 
+                // Действия админа
                 if (isAdmin) {
                     document.querySelectorAll('[data-action]').forEach(el => {
                         el.addEventListener('click', function(e) {
@@ -1240,6 +1242,13 @@
                     </div>`;
                 });
                 list.innerHTML = html;
+
+                document.querySelectorAll('.lb-user').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const username = this.dataset.username;
+                        showToast(`👤 ${username}: ${users.find(u => u.username === username)?.points || 0} очков`);
+                    });
+                });
             }
 
             function openLevelPage(id) {
@@ -1426,22 +1435,14 @@
             }
 
             function login(username, password) {
-                // Поиск пользователя
                 const user = users.find(u => u.username === username && u.password === password);
-                
-                if (!user) {
-                    showToast('❌ Неверный логин или пароль');
-                    console.log('❌ Ошибка входа. Доступные пользователи:', users.map(u => u.username));
-                    return;
-                }
-                
+                if (!user) { showToast('❌ Неверный логин или пароль'); return; }
                 currentUser = username;
                 isAdmin = user.isAdmin || false;
                 localStorage.setItem('itdl_session', username);
                 updateAuthUI();
                 renderAll();
                 showToast(`👋 Добро пожаловать, ${username}!`);
-                console.log(`✅ Вход выполнен: ${username} (админ: ${isAdmin})`);
             }
 
             function logout() {
@@ -1478,12 +1479,18 @@
                 
                 if (!confirm(`Вы уверены, что хотите НАВСЕГДА удалить аккаунт "${currentUser}"?`)) return;
                 
+                // Удаляем пользователя
                 users = users.filter(u => u.username !== currentUser);
+                
+                // Удаляем из викторов
                 levels.forEach(level => {
                     if (level.victors) {
                         level.victors = level.victors.filter(v => v.name !== currentUser);
                     }
                 });
+                
+                // Удаляем уведомления
+                notifications = notifications.filter(n => n.username !== currentUser);
                 
                 saveData();
                 document.getElementById('deleteAccountModal').classList.remove('open');
@@ -1614,18 +1621,15 @@
                 });
 
                 // Синхронизация
-                document.getElementById('syncBtn').addEventListener('click', async () => {
-                    showToast('🔄 Синхронизация...');
-                    await loadData();
-                    showToast('✅ Данные синхронизированы');
-                });
+                document.getElementById('syncBtn').addEventListener('click', syncData);
 
                 // Загрузка данных
                 loadData();
 
                 console.log('🚀 ITDL запущен!');
-                console.log('🔑 Для входа используйте: admin / 123');
-                console.log('📊 Всего пользователей:', users.length);
+                console.log('📌 Настройте GITHUB_CONFIG в начале скрипта');
+                console.log('🔑 Используйте admin/123 для входа');
+                console.log('🔄 Данные синхронизируются с GitHub автоматически');
             });
 
         })();
