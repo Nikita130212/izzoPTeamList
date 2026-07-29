@@ -253,6 +253,7 @@
         .sync-status.syncing i { color: var(--accent); animation: spin 1s linear infinite; }
         .sync-status.error i { color: var(--danger); }
         .sync-status.offline i { color: var(--text-muted); }
+        .sync-status.pending i { color: var(--gold); }
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -835,7 +836,7 @@
                     <button class="btn btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Вход</button>
                     <button class="btn btn-outline" id="registerBtn"><i class="fas fa-user-plus"></i> Регистрация</button>
                     <button class="btn btn-outline" id="logoutBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Выйти</button>
-                    <button class="btn btn-danger" id="deleteAccountBtn" style="display:none;"><i class="fas fa-user-slash"></i> Удалить аккаунт</button>
+                    <button class="btn btn-danger" id="deleteAccountBtn" style="display:none;"><i class="fas fa-user-slash"></i> Удалить</button>
                 </div>
                 <div class="sync-status" id="syncStatus">
                     <i class="fas fa-cloud"></i>
@@ -981,12 +982,36 @@
         "use strict";
 
         // ============================================
-        // 1. КОНФИГУРАЦИЯ GITHUB
+        // 1. КОНФИГУРАЦИЯ С ПОДДЕРЖКОЙ GITHUB SECRETS
         // ============================================
-        const GITHUB_CONFIG = {
+        // Токен берется из:
+        // 1. Переменной окружения process.env.GITHUB_TOKEN (для GitHub Actions)
+        // 2. localStorage (для локальной разработки)
+        // 3. Вводится пользователем (если нет нигде)
+        
+        function getGitHubToken() {
+            // Пробуем получить токен из разных источников
+            let token = '';
+            
+            // 1. Из переменной окружения (GitHub Actions / Secrets)
+            if (typeof process !== 'undefined' && process.env && process.env.HUINYA) {
+                token = process.env.HUINYA;
+            }
+            
+            // 2. Из localStorage (для локальной разработки)
+            if (!token) {
+                try {
+                    token = localStorage.getItem('github_token') || '';
+                } catch (e) {}
+            }
+            
+            return token;
+        }
+
+        const HUINYA = {
             owner: 'Nikita130212',        // Ваш ник на GitHub
             repo: 'izzoPTeamList',        // Название репозитория
-            token: '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',      // Вставьте ваш GitHub токен
+            token: getGitHubToken(),      // Токен из безопасного источника
             issueNumber: 1               // Номер Issue
         };
 
@@ -1003,10 +1028,24 @@
                 };
             }
 
+            hasToken() {
+                return this.config.token && this.config.token.length > 10;
+            }
+
             async load() {
+                if (!this.hasToken()) {
+                    console.warn('Токен не установлен');
+                    return null;
+                }
                 try {
                     const response = await fetch(this.apiUrl, { headers: this.headers });
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            // Issue не существует - создаем
+                            return await this.createIssue();
+                        }
+                        throw new Error(`HTTP ${response.status}`);
+                    }
                     const data = await response.json();
                     return JSON.parse(data.body || '{}');
                 } catch (e) {
@@ -1015,7 +1054,40 @@
                 }
             }
 
+            async createIssue() {
+                try {
+                    const response = await fetch(
+                        `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/issues`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `token ${this.config.token}`,
+                                'Accept': 'application/vnd.github.v3+json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                title: 'ITDL Database',
+                                body: '{}'
+                            })
+                        }
+                    );
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const data = await response.json();
+                    // Обновляем номер Issue
+                    this.config.issueNumber = data.number;
+                    this.apiUrl = `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/issues/${data.number}`;
+                    return {};
+                } catch (e) {
+                    console.error('Create issue error:', e);
+                    return null;
+                }
+            }
+
             async save(data) {
+                if (!this.hasToken()) {
+                    console.warn('Токен не установлен');
+                    return null;
+                }
                 try {
                     const body = JSON.stringify(data, null, 2);
                     const response = await fetch(this.apiUrl, {
@@ -1027,27 +1099,6 @@
                     return await response.json();
                 } catch (e) {
                     console.error('GitHub save error:', e);
-                    return null;
-                }
-            }
-
-            async createIssue() {
-                try {
-                    const response = await fetch(
-                        `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/issues`,
-                        {
-                            method: 'POST',
-                            headers: this.headers,
-                            body: JSON.stringify({
-                                title: 'ITDL Database',
-                                body: '{}'
-                            })
-                        }
-                    );
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    return await response.json();
-                } catch (e) {
-                    console.error('Create issue error:', e);
                     return null;
                 }
             }
@@ -1066,7 +1117,8 @@
         let isSyncing = false;
         let confirmCallback = null;
 
-        const db = new GitHubDB(GITHUB_CONFIG);
+        // Создаем экземпляр БД
+        let db = new GitHubDB(GITHUB_CONFIG);
 
         // ============================================
         // 4. РАБОТА С LOCALSTORAGE (КЭШ)
@@ -1094,6 +1146,18 @@
 
         function loadSession() {
             return localStorage.getItem('itdl_session');
+        }
+
+        function saveToken(token) {
+            if (token) {
+                localStorage.setItem('github_token', token);
+            } else {
+                localStorage.removeItem('github_token');
+            }
+        }
+
+        function loadToken() {
+            return localStorage.getItem('github_token') || '';
         }
 
         // ============================================
@@ -1126,7 +1190,12 @@
         async function loadData() {
             updateSyncStatus('syncing', 'Загрузка...');
             
-            let data = await db.load();
+            let data = null;
+            
+            // Пробуем загрузить с GitHub если есть токен
+            if (db.hasToken()) {
+                data = await db.load();
+            }
             
             if (data) {
                 levels = data.levels || [];
@@ -1141,7 +1210,15 @@
                     levels = cached.levels || [];
                     users = cached.users || [];
                     notifications = cached.notifications || [];
-                    updateSyncStatus('offline', 'Офлайн режим');
+                    if (db.hasToken()) {
+                        updateSyncStatus('offline', 'Офлайн режим');
+                    } else {
+                        updateSyncStatus('pending', 'Токен не найден');
+                        // Показываем подсказку о настройке токена
+                        setTimeout(() => {
+                            showToast('⚠️ Токен не найден. Используйте GitHub Secrets или введите токен вручную');
+                        }, 1000);
+                    }
                 } else {
                     const def = getDefaultData();
                     levels = def.levels;
@@ -1178,7 +1255,7 @@
             
             saveToCache(data);
             
-            if (!isSyncing) {
+            if (!isSyncing && db.hasToken()) {
                 isSyncing = true;
                 updateSyncStatus('syncing', 'Сохранение...');
                 
@@ -1193,6 +1270,8 @@
                 }
                 
                 isSyncing = false;
+            } else if (!db.hasToken()) {
+                updateSyncStatus('pending', 'Токен не найден');
             }
 
             renderAll();
@@ -1200,16 +1279,27 @@
 
         async function syncData() {
             if (isSyncing) return;
+            
+            if (!db.hasToken()) {
+                showToast('⚠️ Токен не найден. Используйте GitHub Secrets или введите токен вручную');
+                // Пытаемся загрузить токен из localStorage
+                const token = loadToken();
+                if (token) {
+                    GITHUB_CONFIG.token = token;
+                    db = new GitHubDB(GITHUB_CONFIG);
+                    showToast('🔄 Токен загружен из localStorage');
+                } else {
+                    showToast('❌ Токен не найден в GitHub Secrets и localStorage');
+                    return;
+                }
+            }
+            
             updateSyncStatus('syncing', 'Синхронизация...');
             
-            // Сначала загружаем свежие данные с GitHub
+            // Загружаем свежие данные с GitHub
             const data = await db.load();
             
             if (data) {
-                // Объединяем данные (локальные изменения имеют приоритет)
-                const localData = loadFromCache() || { levels: [], users: [], notifications: [] };
-                
-                // Просто используем данные с GitHub, так как они самые свежие
                 levels = data.levels || [];
                 users = data.users || [];
                 notifications = data.notifications || [];
@@ -1725,19 +1815,13 @@
             showConfirm('Удаление аккаунта', 
                 `Вы действительно хотите удалить аккаунт "${currentUser}"? Это действие нельзя отменить!`,
                 async () => {
-                    // Удаляем пользователя
                     users = users.filter(u => u.username !== currentUser);
-                    
-                    // Удаляем все заявки пользователя
                     notifications = notifications.filter(n => n.username !== currentUser);
-                    
-                    // Удаляем пользователя из викторов
                     levels.forEach(level => {
                         if (level.victors) {
                             level.victors = level.victors.filter(v => v.name !== currentUser);
                         }
                     });
-                    
                     await saveData();
                     logout();
                     showToast('🗑️ Аккаунт удалён');
@@ -1901,17 +1985,40 @@
 
             // Загрузка данных
             loadData();
+            
+            // Показываем статус токена
+            if (!db.hasToken()) {
+                console.log('ℹ️ GitHub токен не найден. Используйте один из способов:');
+                console.log('1. GitHub Secrets: Settings → Secrets and variables → Actions → GITHUB_TOKEN');
+                console.log('2. localStorage: Введите токен в консоли: localStorage.setItem("github_token", "ваш_токен")');
+                setTimeout(() => {
+                    showToast('🔑 Токен не найден. Данные сохраняются локально');
+                }, 2000);
+            }
         });
 
         // Экспорт для onclick
         window.moveLevel = moveLevel;
         window.deleteLevel = deleteLevel;
         window.addVictor = addVictor;
+        window.syncData = syncData;
+        window.setGitHubToken = function(token) {
+            if (token) {
+                saveToken(token);
+                GITHUB_CONFIG.token = token;
+                db = new GitHubDB(GITHUB_CONFIG);
+                showToast('✅ Токен сохранён в localStorage');
+                loadData();
+            }
+        };
 
         console.log('🚀 ITDL запущен!');
-        console.log('📌 Настройте GITHUB_CONFIG в начале скрипта');
+        console.log('📌 Токен загружается из:');
+        console.log('   1. GitHub Secrets (process.env.GITHUB_TOKEN)');
+        console.log('   2. localStorage (github_token)');
+        console.log('🔑 Для ручной установки токена выполните в консоли:');
+        console.log('   setGitHubToken("ваш_токен")');
         console.log('🔑 Используйте admin/123 для входа');
-        console.log('📡 Данные синхронизируются через GitHub');
     })();
     </script>
 </body>
