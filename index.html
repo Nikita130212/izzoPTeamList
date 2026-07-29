@@ -727,7 +727,6 @@
             min-width: 150px;
         }
 
-        /* Leaderboard */
         .leaderboard-page {
             display: none;
             background: var(--bg-surface2);
@@ -780,7 +779,6 @@
             color: var(--text-muted);
         }
 
-        /* User profile modal */
         .user-profile-modal .modal {
             max-width: 500px;
             max-height: 80vh;
@@ -897,6 +895,36 @@
             border: none;
         }
 
+        .sync-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-muted);
+            padding: 4px 12px;
+            border-radius: 40px;
+            background: var(--bg-surface2);
+            border: 1px solid var(--border-color);
+        }
+        .sync-status i {
+            font-size: 12px;
+        }
+        .sync-status.synced i {
+            color: var(--success);
+        }
+        .sync-status.syncing i {
+            color: var(--accent);
+            animation: spin 1s linear infinite;
+        }
+        .sync-status.error i {
+            color: var(--danger);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
         @media (max-width: 700px) {
             .header {
                 flex-direction: column;
@@ -959,6 +987,10 @@
                     <span class="badge" id="notifBadge" style="display:none;">0</span>
                 </div>
                 <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span id="themeLabel">Тёмная</span></button>
+                <div class="sync-status" id="syncStatus">
+                    <i class="fas fa-cloud"></i>
+                    <span id="syncStatusText">Синхронизация...</span>
+                </div>
             </div>
             <div class="notifications-dropdown" id="notificationsDropdown">
                 <div class="notif-header">
@@ -1015,6 +1047,7 @@
                     <div class="form-group"><label>Позиция</label><input type="number" id="levelPosition" placeholder="1" value="1"></div>
                     <div class="form-group"><label>Видео (YouTube)</label><input type="text" id="levelVideo" placeholder="https://youtube.com/watch?v=..." value="https://www.youtube.com/watch?v=0zL5rYV0mE8"></div>
                     <button class="btn btn-success" id="addLevelBtn"><i class="fas fa-plus"></i> Добавить</button>
+                    <button class="btn btn-outline" id="syncBtn"><i class="fas fa-sync"></i> Синхр.</button>
                 </div>
                 <div style="margin-top:12px; display:flex; gap:12px; flex-wrap:wrap;">
                     <small style="color:var(--text-muted);"><i class="fas fa-info-circle"></i> Баллы: топ-1=300, топ-2=270, топ-3=245, топ-4=225, топ-5=210, топ-6=195, топ-7=180, топ-8=165, топ-9=150, топ-10=135, топ-11=120, далее -5 (топ-12=115, топ-13=110...)</small>
@@ -1089,128 +1122,187 @@
         (function() {
             "use strict";
 
-            // ----- ТЕМА -----
-            const themeToggle = document.getElementById('themeToggle');
-            const themeLabel = document.getElementById('themeLabel');
-            const html = document.documentElement;
-            let currentTheme = localStorage.getItem('itdl-theme') || 'dark';
-            html.setAttribute('data-theme', currentTheme);
-            updateThemeLabel(currentTheme);
-            themeToggle.addEventListener('click', () => {
-                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-                html.setAttribute('data-theme', next);
-                localStorage.setItem('itdl-theme', next);
-                updateThemeLabel(next);
-            });
+            // ===== GitHub Database Configuration =====
+            // Замените эти значения на свои
+            const GITHUB_CONFIG = {
+                owner: 'Nikita130213',
+                repo: 'izzoPTeamList',
+                token: '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', // Personal Access Token
+                issueNumber: 1 // Номер issue для хранения данных
+            };
 
-            function updateThemeLabel(theme) {
-                themeLabel.textContent = theme === 'dark' ? 'Тёмная' : 'Светлая';
-                themeToggle.innerHTML =
-                    `<i class="fas ${theme === 'dark' ? 'fa-moon' : 'fa-sun'}"></i> <span id="themeLabel">${theme === 'dark' ? 'Тёмная' : 'Светлая'}</span>`;
+            // ===== Database Class =====
+            class GitHubDatabase {
+                constructor(config) {
+                    this.config = config;
+                    this.apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/issues/${config.issueNumber}`;
+                    this.headers = {
+                        'Authorization': `token ${config.token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    };
+                }
+
+                async load() {
+                    try {
+                        const response = await fetch(this.apiUrl, { headers: this.headers });
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        const data = await response.json();
+                        const body = data.body || '{}';
+                        return JSON.parse(body);
+                    } catch (error) {
+                        console.error('Ошибка загрузки данных:', error);
+                        return null;
+                    }
+                }
+
+                async save(data) {
+                    try {
+                        const body = JSON.stringify(data, null, 2);
+                        const response = await fetch(this.apiUrl, {
+                            method: 'PATCH',
+                            headers: this.headers,
+                            body: JSON.stringify({ body })
+                        });
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        return await response.json();
+                    } catch (error) {
+                        console.error('Ошибка сохранения данных:', error);
+                        return null;
+                    }
+                }
             }
 
-            // ----- ДАННЫЕ -----
+            // ===== Local Storage Backup =====
+            const LOCAL_STORAGE_KEY = 'itdl_data_backup';
+            
+            function saveToLocalStorage(data) {
+                try {
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+                } catch (error) {
+                    console.error('Ошибка сохранения в localStorage:', error);
+                }
+            }
+
+            function loadFromLocalStorage() {
+                try {
+                    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+                    return data ? JSON.parse(data) : null;
+                } catch (error) {
+                    console.error('Ошибка загрузки из localStorage:', error);
+                    return null;
+                }
+            }
+
+            // ===== Initialize Database =====
+            const db = new GitHubDatabase(GITHUB_CONFIG);
+            let syncStatus = document.getElementById('syncStatus');
+            let syncStatusText = document.getElementById('syncStatusText');
+
+            function updateSyncStatus(status, message) {
+                syncStatus.className = 'sync-status ' + status;
+                syncStatusText.textContent = message;
+            }
+
+            // ===== Data Management =====
             let levels = [];
             let users = [];
             let notifications = [];
             let currentUser = null;
             let isAdmin = false;
             let currentView = 'levels';
-
-            // DOM
-            const tbody = document.getElementById('levelTableBody');
-            const adminPanel = document.getElementById('adminPanel');
-            const loginBtn = document.getElementById('loginBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            const registerBtn = document.getElementById('registerBtn');
-            const loginInput = document.getElementById('loginInput');
-            const passInput = document.getElementById('passInput');
-            const addBtn = document.getElementById('addLevelBtn');
-            const nameInp = document.getElementById('levelName');
-            const authorInp = document.getElementById('levelAuthor');
-            const posInp = document.getElementById('levelPosition');
-            const videoInp = document.getElementById('levelVideo');
-            const toastEl = document.getElementById('toast');
-            let toastTimeout = null;
-
-            const registerModal = document.getElementById('registerModal');
-            const regLogin = document.getElementById('regLogin');
-            const regPassword = document.getElementById('regPassword');
-            const registerConfirmBtn = document.getElementById('registerConfirmBtn');
-            const closeRegisterModal = document.getElementById('closeRegisterModal');
-
-            const victorVideoModal = document.getElementById('victorVideoModal');
-            const victorVideoIframe = document.getElementById('victorVideoIframe');
-            const victorVideoTitle = document.getElementById('victorVideoTitle');
-            const closeVictorVideoModal = document.getElementById('closeVictorVideoModal');
-
-            const userProfileModal = document.getElementById('userProfileModal');
-            const userProfileName = document.getElementById('userProfileName');
-            const userProfilePoints = document.getElementById('userProfilePoints');
-            const userProfileLevels = document.getElementById('userProfileLevels');
-            const closeUserProfileModal = document.getElementById('closeUserProfileModal');
-
-            const levelPage = document.getElementById('levelPage');
-            const mainView = document.getElementById('mainView');
-            const leaderboardPage = document.getElementById('leaderboardPage');
-            const leaderboardList = document.getElementById('leaderboardList');
-            const navLevelsBtn = document.getElementById('navLevelsBtn');
-            const navLeaderboardBtn = document.getElementById('navLeaderboardBtn');
-            const levelsTableWrap = document.getElementById('levelsTableWrap');
-
-            const lpName = document.getElementById('lpName');
-            const lpAuthor = document.getElementById('lpAuthor');
-            const lpPoints = document.getElementById('lpPoints');
-            const lpVideo = document.getElementById('lpVideo');
-            const lpNoVideo = document.getElementById('lpNoVideo');
-            const videoWrapper = document.getElementById('videoWrapper');
-            const victorList = document.getElementById('victorList');
-            const victorForm = document.getElementById('victorForm');
-            const victorInput = document.getElementById('victorInput');
-            const victorVideoInput = document.getElementById('victorVideoInput');
-            const addVictorBtn = document.getElementById('addVictorBtn');
-            const closeLevelPageBtn = document.getElementById('closeLevelPage');
-            const goHomeBtn = document.getElementById('goHomeBtn');
-            const requestVideo = document.getElementById('requestVideo');
-            const sendRequestBtn = document.getElementById('sendRequestBtn');
-            const requestSection = document.getElementById('requestSection');
-
-            const notifBell = document.getElementById('notificationBell');
-            const notifDropdown = document.getElementById('notificationsDropdown');
-            const notifList = document.getElementById('notifList');
-            const notifBadge = document.getElementById('notifBadge');
-            const clearNotifsBtn = document.getElementById('clearNotifsBtn');
-
             let currentLevelId = null;
+            let isSyncing = false;
 
-            // ----- РАСЧЁТ БАЛЛОВ (новая система: топ-1=300, топ-2=270, топ-3=245, топ-4=225, топ-5=210, топ-6=195, топ-7=180, топ-8=165, топ-9=150, топ-10=135, топ-11=120, далее -5) -----
-            function calculatePoints(position) {
-                const pointsMap = {
-                    1: 300, 2: 270, 3: 245, 4: 225, 5: 210,
-                    6: 195, 7: 180, 8: 165, 9: 150, 10: 135,
-                    11: 120
-                };
-                if (pointsMap[position] !== undefined) return pointsMap[position];
-                // после 11 места: 120 - (position - 11) * 5
-                const result = 120 - (position - 11) * 5;
-                return Math.max(result, 0);
-            }
-
-            function getPointsClass(position) {
-                if (position === 1) return 'top1';
-                if (position === 2) return 'top2';
-                if (position === 3) return 'top3';
-                return '';
-            }
-
-            // ----- ЗАГРУЗКА ДАННЫХ -----
-            function loadData() {
-                const storedLevels = localStorage.getItem('itdl_levels');
-                if (storedLevels) {
-                    try { levels = JSON.parse(storedLevels); } catch (_) {}
+            // ===== Load/Save Functions =====
+            async function loadData() {
+                updateSyncStatus('syncing', 'Загрузка...');
+                
+                let data = await db.load();
+                
+                if (!data) {
+                    // Если не удалось загрузить с GitHub, пробуем из localStorage
+                    data = loadFromLocalStorage();
+                    if (data) {
+                        updateSyncStatus('synced', 'Загружено из кэша');
+                    } else {
+                        // Если данных нет, создаем начальные
+                        data = getDefaultData();
+                        updateSyncStatus('error', 'Ошибка загрузки');
+                    }
+                } else {
+                    updateSyncStatus('synced', 'Синхронизировано');
+                    // Сохраняем в localStorage для кэша
+                    saveToLocalStorage(data);
                 }
-                if (!levels || levels.length === 0) {
-                    levels = [
+
+                // Распаковываем данные
+                levels = data.levels || [];
+                users = data.users || [];
+                notifications = data.notifications || [];
+
+                // Обработка старых форматов victors
+                levels = levels.map(l => {
+                    if (l.victors && l.victors.length > 0 && typeof l.victors[0] === 'string') {
+                        l.victors = l.victors.map(v => ({name: v, video: ''}));
+                    }
+                    if (!l.victors) l.victors = [];
+                    return l;
+                });
+
+                // Проверяем сессию
+                const sessionUser = localStorage.getItem('itdl_session');
+                if (sessionUser) {
+                    const found = users.find(u => u.username === sessionUser);
+                    if (found) {
+                        currentUser = sessionUser;
+                        isAdmin = found.isAdmin || false;
+                        updateAuthUI();
+                    }
+                }
+
+                renderAll();
+            }
+
+            async function saveData() {
+                const data = {
+                    levels: levels,
+                    users: users,
+                    notifications: notifications,
+                    updatedAt: new Date().toISOString()
+                };
+
+                // Сохраняем в localStorage
+                saveToLocalStorage(data);
+
+                // Сохраняем на GitHub
+                if (!isSyncing) {
+                    isSyncing = true;
+                    updateSyncStatus('syncing', 'Сохранение...');
+                    
+                    const result = await db.save(data);
+                    
+                    if (result) {
+                        updateSyncStatus('synced', 'Синхронизировано');
+                    } else {
+                        updateSyncStatus('error', 'Ошибка синхронизации');
+                    }
+                    
+                    isSyncing = false;
+                }
+
+                renderAll();
+            }
+
+            async function syncData() {
+                if (isSyncing) return;
+                await loadData();
+                showToast('Данные синхронизированы');
+            }
+
+            function getDefaultData() {
+                return {
+                    levels: [
                         { id: 1, name: 'foggy morning', author: 'NikSupchik', position: 1,
                             video: 'https://www.youtube.com/watch?v=0zL5rYV0mE8', victors: [{name: 'NikSupchik', video: 'https://www.youtube.com/watch?v=0zL5rYV0mE8'}] },
                         { id: 2, name: 'Bloodbath', author: 'Riot', position: 2,
@@ -1227,74 +1319,41 @@
                         { id: 11, name: 'Nhelv', author: 'TheRealX', position: 11, video: '', victors: [] },
                         { id: 12, name: 'Cold Sweat', author: 'Moldy', position: 12, video: '', victors: [] },
                         { id: 13, name: 'Arcturus', author: 'Rainbow', position: 13, video: '', victors: [] },
-                    ];
-                } else {
-                    levels = levels.map(l => {
-                        if (l.victors && l.victors.length > 0 && typeof l.victors[0] === 'string') {
-                            l.victors = l.victors.map(v => ({name: v, video: ''}));
-                        }
-                        if (!l.victors) l.victors = [];
-                        return l;
-                    });
-                }
-
-                const storedUsers = localStorage.getItem('itdl_users');
-                if (storedUsers) {
-                    try { users = JSON.parse(storedUsers); } catch (_) {}
-                }
-                if (!users || users.length === 0) {
-                    users = [
+                    ],
+                    users: [
                         { username: 'admin', password: '123', isAdmin: true },
                         { username: 'NikSupchik', password: '123', isAdmin: false },
                         { username: 'Riot', password: '123', isAdmin: false },
                         { username: 'Nexus', password: '123', isAdmin: false },
                         { username: 'Cyclic', password: '123', isAdmin: false },
-                    ];
-                }
-
-                const storedNotifs = localStorage.getItem('itdl_notifications');
-                if (storedNotifs) {
-                    try { notifications = JSON.parse(storedNotifs); } catch (_) {}
-                }
-                if (!notifications) notifications = [];
-
-                const sessionUser = localStorage.getItem('itdl_session');
-                if (sessionUser) {
-                    const found = users.find(u => u.username === sessionUser);
-                    if (found) {
-                        currentUser = sessionUser;
-                        isAdmin = found.isAdmin || false;
-                        if (isAdmin) {
-                            adminPanel.style.display = 'block';
-                            loginBtn.style.display = 'none';
-                            logoutBtn.style.display = 'inline-flex';
-                            registerBtn.style.display = 'none';
-                        } else {
-                            adminPanel.style.display = 'none';
-                            loginBtn.style.display = 'none';
-                            logoutBtn.style.display = 'inline-flex';
-                            registerBtn.style.display = 'none';
-                        }
-                    }
-                }
-
-                saveData();
+                    ],
+                    notifications: []
+                };
             }
 
-            function saveData() {
-                localStorage.setItem('itdl_levels', JSON.stringify(levels));
-                localStorage.setItem('itdl_users', JSON.stringify(users));
-                localStorage.setItem('itdl_notifications', JSON.stringify(notifications));
-                renderTable();
-                renderLeaderboard();
-                updateNotifications();
+            // ===== Helper Functions =====
+            function calculatePoints(position) {
+                const pointsMap = {
+                    1: 300, 2: 270, 3: 245, 4: 225, 5: 210,
+                    6: 195, 7: 180, 8: 165, 9: 150, 10: 135,
+                    11: 120
+                };
+                if (pointsMap[position] !== undefined) return pointsMap[position];
+                const result = 120 - (position - 11) * 5;
+                return Math.max(result, 0);
             }
 
-            function genId() { return levels.length ? Math.max(...levels.map(l => l.id)) + 1 : 1; }
+            function getPointsClass(position) {
+                if (position === 1) return 'top1';
+                if (position === 2) return 'top2';
+                if (position === 3) return 'top3';
+                return '';
+            }
 
-            function genNotifId() { return notifications.length ? Math.max(...notifications.map(n => n.id)) + 1 : 1; }
+            function genId(arr) {
+                return arr.length ? Math.max(...arr.map(item => item.id)) + 1 : 1;
+            }
 
-            // ----- YOUTUBE ФУНКЦИИ -----
             function extractYouTubeId(url) {
                 if (!url) return null;
                 const str = url.trim();
@@ -1320,10 +1379,89 @@
                 return null;
             }
 
-            // ----- УВЕДОМЛЕНИЯ -----
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function showToast(msg) {
+                const toastEl = document.getElementById('toast');
+                toastEl.textContent = msg;
+                toastEl.classList.remove('hidden');
+                clearTimeout(toastEl._timeout);
+                toastEl._timeout = setTimeout(() => toastEl.classList.add('hidden'), 3000);
+            }
+
+            // ===== Auth Functions =====
+            function updateAuthUI() {
+                const loginBtn = document.getElementById('loginBtn');
+                const logoutBtn = document.getElementById('logoutBtn');
+                const registerBtn = document.getElementById('registerBtn');
+                const adminPanel = document.getElementById('adminPanel');
+
+                if (currentUser) {
+                    loginBtn.style.display = 'none';
+                    logoutBtn.style.display = 'inline-flex';
+                    registerBtn.style.display = 'none';
+                    if (isAdmin) {
+                        adminPanel.style.display = 'block';
+                    } else {
+                        adminPanel.style.display = 'none';
+                    }
+                    if (document.getElementById('levelPage').classList.contains('active')) {
+                        document.getElementById('requestSection').style.display = 'block';
+                        document.getElementById('victorForm').style.display = isAdmin ? 'flex' : 'none';
+                    }
+                } else {
+                    loginBtn.style.display = 'inline-flex';
+                    logoutBtn.style.display = 'none';
+                    registerBtn.style.display = 'inline-flex';
+                    adminPanel.style.display = 'none';
+                    if (document.getElementById('levelPage').classList.contains('active')) {
+                        document.getElementById('requestSection').style.display = 'none';
+                        document.getElementById('victorForm').style.display = 'none';
+                    }
+                }
+                updateNotifications();
+            }
+
+            function login(username, password) {
+                const user = users.find(u => u.username === username && u.password === password);
+                if (!user) { showToast('Неверный логин или пароль'); return false; }
+                currentUser = username;
+                isAdmin = user.isAdmin || false;
+                localStorage.setItem('itdl_session', username);
+                updateAuthUI();
+                renderAll();
+                showToast(`Добро пожаловать, ${username}!`);
+                return true;
+            }
+
+            function logout() {
+                currentUser = null;
+                isAdmin = false;
+                localStorage.removeItem('itdl_session');
+                updateAuthUI();
+                renderAll();
+                showToast('Вы вышли');
+            }
+
+            function registerUser(username, password) {
+                if (!username || !password) { showToast('Заполните все поля'); return false; }
+                if (users.find(u => u.username === username)) { showToast('Пользователь уже существует'); return false; }
+                users.push({ username, password, isAdmin: false });
+                saveData();
+                showToast(`Пользователь ${username} зарегистрирован!`);
+                login(username, password);
+                document.getElementById('registerModal').classList.remove('open');
+                return true;
+            }
+
+            // ===== Notifications =====
             function addNotification(levelId, levelName, username, videoUrl, status, adminNote) {
                 const notif = {
-                    id: genNotifId(),
+                    id: genId(notifications),
                     levelId: levelId,
                     levelName: levelName,
                     username: username,
@@ -1335,10 +1473,10 @@
                 notifications.unshift(notif);
                 if (notifications.length > 100) notifications = notifications.slice(0, 100);
                 saveData();
-                updateNotifications();
             }
 
             function updateNotifications() {
+                const notifBadge = document.getElementById('notifBadge');
                 const userNotifs = isAdmin ? notifications : notifications.filter(n => n.username === currentUser);
                 const pendingCount = isAdmin ? notifications.filter(n => n.status === 'pending').length : userNotifs.filter(n =>
                     n.status !== 'pending').length;
@@ -1349,11 +1487,11 @@
                 } else {
                     notifBadge.style.display = 'none';
                 }
-
                 renderNotifications(userNotifs);
             }
 
             function renderNotifications(notifs) {
+                const notifList = document.getElementById('notifList');
                 if (!notifs || notifs.length === 0) {
                     notifList.innerHTML = `<div class="notif-empty"><i class="fas fa-inbox"></i><p>Нет уведомлений</p></div>`;
                     return;
@@ -1413,96 +1551,9 @@
                 updateNotifications();
             };
 
-            // ----- ЛИДЕРБОРД -----
-            function getUserPoints(username) {
-                let total = 0;
-                levels.forEach(level => {
-                    if (level.victors && level.victors.find(v => v.name === username)) {
-                        total += calculatePoints(level.position);
-                    }
-                });
-                return total;
-            }
-
-            function renderLeaderboard() {
-                const sortedUsers = users
-                    .filter(u => !u.isAdmin)
-                    .map(u => ({
-                        username: u.username,
-                        points: getUserPoints(u.username),
-                        levels: levels.filter(l => l.victors && l.victors.find(v => v.name === u.username))
-                    }))
-                    .sort((a, b) => b.points - a.points);
-
-                if (sortedUsers.length === 0) {
-                    leaderboardList.innerHTML = `<div class="empty-state"><i class="fas fa-users"></i><p>Нет игроков</p></div>`;
-                    return;
-                }
-
-                let html = '';
-                sortedUsers.forEach((user, index) => {
-                    const rank = index + 1;
-                    let rankClass = '';
-                    if (rank === 1) rankClass = 'gold';
-                    else if (rank === 2) rankClass = 'silver';
-                    else if (rank === 3) rankClass = 'bronze';
-
-                    const levelNames = user.levels.map(l => l.name).join(', ');
-
-                    html += `<div class="lb-user" data-username="${user.username}">
-                        <span class="lb-rank ${rankClass}">#${rank}</span>
-                        <span class="lb-name">${escapeHtml(user.username)}</span>
-                        <span class="lb-points">${user.points} очков</span>
-                        <span class="lb-levels">${user.levels.length} уровней</span>
-                    </div>`;
-                });
-                leaderboardList.innerHTML = html;
-
-                document.querySelectorAll('.lb-user').forEach(el => {
-                    el.addEventListener('click', function() {
-                        const username = this.dataset.username;
-                        openUserProfile(username);
-                    });
-                });
-            }
-
-            // ----- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ -----
-            function openUserProfile(username) {
-                const user = users.find(u => u.username === username);
-                if (!user) { showToast('Пользователь не найден'); return; }
-                const userLevels = levels.filter(l => l.victors && l.victors.find(v => v.name === username));
-                const totalPoints = getUserPoints(username);
-
-                userProfileName.textContent = username;
-                userProfilePoints.textContent = `${totalPoints} очков`;
-
-                if (userLevels.length === 0) {
-                    userProfileLevels.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:20px 0;">Нет пройденных уровней</div>`;
-                } else {
-                    let html = '';
-                    userLevels.sort((a, b) => a.position - b.position).forEach(level => {
-                        const points = calculatePoints(level.position);
-                        html += `<div class="profile-level-item">
-                            <span class="pl-name" data-levelid="${level.id}">${escapeHtml(level.name)}</span>
-                            <span class="pl-points">${points} очков</span>
-                        </div>`;
-                    });
-                    userProfileLevels.innerHTML = html;
-
-                    document.querySelectorAll('.pl-name').forEach(el => {
-                        el.addEventListener('click', function() {
-                            const id = parseInt(this.dataset.levelid);
-                            userProfileModal.classList.remove('open');
-                            openLevelPage(id);
-                        });
-                    });
-                }
-
-                userProfileModal.classList.add('open');
-            }
-
-            // ----- РЕНДЕР ТАБЛИЦЫ -----
+            // ===== Render Functions =====
             function renderTable() {
+                const tbody = document.getElementById('levelTableBody');
                 const sorted = [...levels].sort((a, b) => a.position - b.position);
                 if (sorted.length === 0) {
                     tbody.innerHTML =
@@ -1575,19 +1626,186 @@
                 }
             }
 
-            function escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
+            function renderLeaderboard() {
+                const leaderboardList = document.getElementById('leaderboardList');
+                const sortedUsers = users
+                    .filter(u => !u.isAdmin)
+                    .map(u => ({
+                        username: u.username,
+                        points: levels.filter(l => l.victors && l.victors.find(v => v.name === u.username))
+                            .reduce((sum, l) => sum + calculatePoints(l.position), 0),
+                        levels: levels.filter(l => l.victors && l.victors.find(v => v.name === u.username))
+                    }))
+                    .sort((a, b) => b.points - a.points);
+
+                if (sortedUsers.length === 0) {
+                    leaderboardList.innerHTML = `<div class="empty-state"><i class="fas fa-users"></i><p>Нет игроков</p></div>`;
+                    return;
+                }
+
+                let html = '';
+                sortedUsers.forEach((user, index) => {
+                    const rank = index + 1;
+                    let rankClass = '';
+                    if (rank === 1) rankClass = 'gold';
+                    else if (rank === 2) rankClass = 'silver';
+                    else if (rank === 3) rankClass = 'bronze';
+
+                    const levelNames = user.levels.map(l => l.name).join(', ');
+
+                    html += `<div class="lb-user" data-username="${user.username}">
+                        <span class="lb-rank ${rankClass}">#${rank}</span>
+                        <span class="lb-name">${escapeHtml(user.username)}</span>
+                        <span class="lb-points">${user.points} очков</span>
+                        <span class="lb-levels">${user.levels.length} уровней</span>
+                    </div>`;
+                });
+                leaderboardList.innerHTML = html;
+
+                document.querySelectorAll('.lb-user').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const username = this.dataset.username;
+                        openUserProfile(username);
+                    });
+                });
             }
 
-            // ----- CRUD -----
+            function openUserProfile(username) {
+                const user = users.find(u => u.username === username);
+                if (!user) { showToast('Пользователь не найден'); return; }
+                const userLevels = levels.filter(l => l.victors && l.victors.find(v => v.name === username));
+                const totalPoints = userLevels.reduce((sum, l) => sum + calculatePoints(l.position), 0);
+
+                document.getElementById('userProfileName').textContent = username;
+                document.getElementById('userProfilePoints').textContent = `${totalPoints} очков`;
+
+                const profileLevels = document.getElementById('userProfileLevels');
+                if (userLevels.length === 0) {
+                    profileLevels.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:20px 0;">Нет пройденных уровней</div>`;
+                } else {
+                    let html = '';
+                    userLevels.sort((a, b) => a.position - b.position).forEach(level => {
+                        const points = calculatePoints(level.position);
+                        html += `<div class="profile-level-item">
+                            <span class="pl-name" data-levelid="${level.id}">${escapeHtml(level.name)}</span>
+                            <span class="pl-points">${points} очков</span>
+                        </div>`;
+                    });
+                    profileLevels.innerHTML = html;
+
+                    document.querySelectorAll('.pl-name').forEach(el => {
+                        el.addEventListener('click', function() {
+                            const id = parseInt(this.dataset.levelid);
+                            document.getElementById('userProfileModal').classList.remove('open');
+                            openLevelPage(id);
+                        });
+                    });
+                }
+
+                document.getElementById('userProfileModal').classList.add('open');
+            }
+
+            function openLevelPage(id) {
+                const level = levels.find(l => l.id === id);
+                if (!level) { showToast('Уровень не найден'); return; }
+                currentLevelId = id;
+                document.getElementById('lpName').textContent = level.name;
+                document.getElementById('lpAuthor').textContent = `Автор: ${level.author}`;
+                document.getElementById('lpPoints').textContent = `${calculatePoints(level.position)} points`;
+
+                const embed = toEmbedUrl(level.video);
+                if (embed) {
+                    document.getElementById('lpVideo').src = embed;
+                    document.getElementById('videoWrapper').style.display = 'block';
+                    document.getElementById('lpNoVideo').style.display = 'none';
+                } else {
+                    document.getElementById('lpVideo').src = '';
+                    document.getElementById('videoWrapper').style.display = 'none';
+                    document.getElementById('lpNoVideo').style.display = 'block';
+                }
+
+                renderVictors(level.victors || []);
+                document.getElementById('victorForm').style.display = isAdmin ? 'flex' : 'none';
+                document.getElementById('requestSection').style.display = currentUser ? 'block' : 'none';
+
+                document.getElementById('mainView').style.display = 'none';
+                document.getElementById('leaderboardPage').classList.remove('active');
+                document.getElementById('leaderboardPage').style.display = 'none';
+                document.getElementById('levelPage').classList.add('active');
+                document.getElementById('levelPage').style.display = 'block';
+            }
+
+            function closeLevelPage() {
+                document.getElementById('mainView').style.display = 'block';
+                document.getElementById('levelPage').classList.remove('active');
+                document.getElementById('levelPage').style.display = 'none';
+                currentLevelId = null;
+                document.getElementById('lpVideo').src = '';
+                if (currentView === 'leaderboard') {
+                    document.getElementById('mainView').style.display = 'none';
+                    document.getElementById('leaderboardPage').style.display = 'block';
+                    document.getElementById('leaderboardPage').classList.add('active');
+                } else {
+                    document.getElementById('mainView').style.display = 'block';
+                }
+            }
+
+            function renderVictors(victors) {
+                const victorList = document.getElementById('victorList');
+                if (!victors || victors.length === 0) {
+                    victorList.innerHTML = `<span style="color:var(--text-muted);"><i class="fas fa-user-slash"></i> Нет викторов</span>`;
+                    return;
+                }
+                let html = '';
+                victors.forEach((v, idx) => {
+                    const hasVideo = v.video && v.video.trim() !== '';
+                    html += `<div class="victor-item">
+                        <span class="victor-name" data-video="${escapeHtml(v.video || '')}" data-name="${escapeHtml(v.name)}">
+                            <i class="fas fa-trophy"></i> ${escapeHtml(v.name)}
+                            ${hasVideo ? `<span class="victor-video-icon"><i class="fas fa-play-circle"></i></span>` : ''}
+                        </span>
+                        ${isAdmin ? `<button class="victor-delete" data-index="${idx}" title="Удалить виктора"><i class="fas fa-times"></i></button>` : ''}
+                    </div>`;
+                });
+                victorList.innerHTML = html;
+
+                document.querySelectorAll('.victor-name').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const video = this.dataset.video;
+                        const name = this.dataset.name;
+                        if (video && video.trim() !== '') {
+                            const embed = toEmbedUrl(video);
+                            if (embed) {
+                                document.getElementById('victorVideoTitle').textContent = `Прохождение — ${name}`;
+                                document.getElementById('victorVideoIframe').src = embed;
+                                document.getElementById('victorVideoModal').classList.add('open');
+                            } else {
+                                showToast('Некорректная ссылка на видео');
+                            }
+                        } else {
+                            showToast(`У ${name} нет видео прохождения`);
+                        }
+                    });
+                });
+
+                if (isAdmin) {
+                    document.querySelectorAll('.victor-delete').forEach(el => {
+                        el.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const index = parseInt(this.dataset.index);
+                            deleteVictor(index);
+                        });
+                    });
+                }
+            }
+
+            // ===== CRUD Operations =====
             function addLevel(name, author, position, video) {
                 if (!name.trim() || !author.trim()) { showToast('Заполните название и автора'); return false; }
                 const pos = parseInt(position);
                 if (isNaN(pos) || pos < 1) { showToast('Позиция >= 1'); return false; }
                 if (levels.some(l => l.position === pos)) { showToast(`Позиция ${pos} занята`); return false; }
-                const newLevel = { id: genId(), name: name.trim(), author: author.trim(), position: pos,
+                const newLevel = { id: genId(levels), name: name.trim(), author: author.trim(), position: pos,
                     video: video.trim() || '', victors: [] };
                 levels.push(newLevel);
                 saveData();
@@ -1620,101 +1838,6 @@
                 showToast('Позиция обновлена');
             }
 
-            // ----- СТРАНИЦА УРОВНЯ -----
-            function openLevelPage(id) {
-                const level = levels.find(l => l.id === id);
-                if (!level) { showToast('Уровень не найден'); return; }
-                currentLevelId = id;
-                lpName.textContent = level.name;
-                lpAuthor.textContent = `Автор: ${level.author}`;
-                lpPoints.textContent = `${calculatePoints(level.position)} points`;
-
-                const embed = toEmbedUrl(level.video);
-                if (embed) {
-                    lpVideo.src = embed;
-                    videoWrapper.style.display = 'block';
-                    lpNoVideo.style.display = 'none';
-                } else {
-                    lpVideo.src = '';
-                    videoWrapper.style.display = 'none';
-                    lpNoVideo.style.display = 'block';
-                }
-
-                renderVictors(level.victors || []);
-                victorForm.style.display = isAdmin ? 'flex' : 'none';
-                requestSection.style.display = currentUser ? 'block' : 'none';
-
-                mainView.style.display = 'none';
-                leaderboardPage.classList.remove('active');
-                leaderboardPage.style.display = 'none';
-                levelPage.classList.add('active');
-                levelPage.style.display = 'block';
-            }
-
-            function closeLevelPage() {
-                mainView.style.display = 'block';
-                levelPage.classList.remove('active');
-                levelPage.style.display = 'none';
-                currentLevelId = null;
-                lpVideo.src = '';
-                if (currentView === 'leaderboard') {
-                    mainView.style.display = 'none';
-                    leaderboardPage.style.display = 'block';
-                    leaderboardPage.classList.add('active');
-                } else {
-                    mainView.style.display = 'block';
-                }
-            }
-
-            function renderVictors(victors) {
-                if (!victors || victors.length === 0) {
-                    victorList.innerHTML = `<span style="color:var(--text-muted);"><i class="fas fa-user-slash"></i> Нет викторов</span>`;
-                    return;
-                }
-                let html = '';
-                victors.forEach((v, idx) => {
-                    const hasVideo = v.video && v.video.trim() !== '';
-                    const isAdminUser = isAdmin;
-                    html += `<div class="victor-item">
-                        <span class="victor-name" data-video="${escapeHtml(v.video || '')}" data-name="${escapeHtml(v.name)}">
-                            <i class="fas fa-trophy"></i> ${escapeHtml(v.name)}
-                            ${hasVideo ? `<span class="victor-video-icon"><i class="fas fa-play-circle"></i></span>` : ''}
-                        </span>
-                        ${isAdminUser ? `<button class="victor-delete" data-index="${idx}" title="Удалить виктора"><i class="fas fa-times"></i></button>` : ''}
-                    </div>`;
-                });
-                victorList.innerHTML = html;
-
-                document.querySelectorAll('.victor-name').forEach(el => {
-                    el.addEventListener('click', function() {
-                        const video = this.dataset.video;
-                        const name = this.dataset.name;
-                        if (video && video.trim() !== '') {
-                            const embed = toEmbedUrl(video);
-                            if (embed) {
-                                victorVideoTitle.textContent = `Прохождение — ${name}`;
-                                victorVideoIframe.src = embed;
-                                victorVideoModal.classList.add('open');
-                            } else {
-                                showToast('Некорректная ссылка на видео');
-                            }
-                        } else {
-                            showToast(`У ${name} нет видео прохождения`);
-                        }
-                    });
-                });
-
-                if (isAdmin) {
-                    document.querySelectorAll('.victor-delete').forEach(el => {
-                        el.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            const index = parseInt(this.dataset.index);
-                            deleteVictor(index);
-                        });
-                    });
-                }
-            }
-
             function deleteVictor(index) {
                 if (!isAdmin) return;
                 if (!currentLevelId) return;
@@ -1744,13 +1867,12 @@
                 showToast(`Виктор "${trimmed}" добавлен`);
             }
 
-            // ----- ОТПРАВКА ЗАЯВКИ -----
             function sendRequest() {
                 if (!currentUser) { showToast('Войдите в аккаунт'); return; }
                 if (!currentLevelId) { showToast('Откройте уровень'); return; }
                 const level = levels.find(l => l.id === currentLevelId);
                 if (!level) return;
-                const videoUrl = requestVideo.value.trim();
+                const videoUrl = document.getElementById('requestVideo').value.trim();
                 if (!videoUrl) { showToast('Введите ссылку на видео'); return; }
                 if (!extractYouTubeId(videoUrl)) { showToast('Введите корректную ссылку YouTube'); return; }
 
@@ -1760,200 +1882,182 @@
 
                 addNotification(currentLevelId, level.name, currentUser, videoUrl, 'pending');
                 showToast('Заявка отправлена!');
-                requestVideo.value = '';
+                document.getElementById('requestVideo').value = '';
             }
 
-            // ----- НАВИГАЦИЯ -----
-            function switchView(view) {
-                if (levelPage.classList.contains('active')) {
-                    // Если страница уровня открыта, не переключаем
-                    return;
-                }
-                currentView = view;
-                navLevelsBtn.classList.toggle('active', view === 'levels');
-                navLeaderboardBtn.classList.toggle('active', view === 'leaderboard');
-
-                if (view === 'levels') {
-                    mainView.style.display = 'block';
-                    leaderboardPage.classList.remove('active');
-                    leaderboardPage.style.display = 'none';
-                } else {
-                    mainView.style.display = 'none';
-                    leaderboardPage.style.display = 'block';
-                    leaderboardPage.classList.add('active');
-                    renderLeaderboard();
-                }
-            }
-
-            navLevelsBtn.addEventListener('click', () => switchView('levels'));
-            navLeaderboardBtn.addEventListener('click', () => switchView('leaderboard'));
-
-            // ----- АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ -----
-            function login(username, password) {
-                const user = users.find(u => u.username === username && u.password === password);
-                if (!user) { showToast('Неверный логин или пароль'); return false; }
-                currentUser = username;
-                isAdmin = user.isAdmin || false;
-                localStorage.setItem('itdl_session', username);
-
-                loginBtn.style.display = 'none';
-                logoutBtn.style.display = 'inline-flex';
-                registerBtn.style.display = 'none';
-                if (isAdmin) adminPanel.style.display = 'block';
-                else adminPanel.style.display = 'none';
-
-                if (levelPage.classList.contains('active')) {
-                    requestSection.style.display = 'block';
-                    victorForm.style.display = isAdmin ? 'flex' : 'none';
-                }
+            function renderAll() {
                 renderTable();
                 renderLeaderboard();
                 updateNotifications();
-                showToast(`Добро пожаловать, ${username}!`);
-                return true;
-            }
-
-            function logout() {
-                currentUser = null;
-                isAdmin = false;
-                localStorage.removeItem('itdl_session');
-                loginBtn.style.display = 'inline-flex';
-                logoutBtn.style.display = 'none';
-                registerBtn.style.display = 'inline-flex';
-                adminPanel.style.display = 'none';
-                if (levelPage.classList.contains('active')) {
-                    requestSection.style.display = 'none';
-                    victorForm.style.display = 'none';
-                }
-                renderTable();
-                renderLeaderboard();
-                updateNotifications();
-                showToast('Вы вышли');
-            }
-
-            function registerUser(username, password) {
-                if (!username || !password) { showToast('Заполните все поля'); return false; }
-                if (users.find(u => u.username === username)) { showToast('Пользователь уже существует'); return false; }
-                users.push({ username, password, isAdmin: false });
-                saveData();
-                showToast(`Пользователь ${username} зарегистрирован!`);
-                login(username, password);
-                registerModal.classList.remove('open');
-                return true;
-            }
-
-            // ----- TOAST -----
-            function showToast(msg) {
-                toastEl.textContent = msg;
-                toastEl.classList.remove('hidden');
-                clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => toastEl.classList.add('hidden'), 3000);
-            }
-
-            // ----- NOTIFICATIONS DROPDOWN -----
-            notifBell.addEventListener('click', (e) => {
-                e.stopPropagation();
-                notifDropdown.classList.toggle('open');
-                if (notifDropdown.classList.contains('open')) {
-                    updateNotifications();
-                }
-            });
-
-            document.addEventListener('click', () => {
-                notifDropdown.classList.remove('open');
-            });
-
-            clearNotifsBtn.addEventListener('click', () => {
-                if (isAdmin) {
-                    notifications = notifications.filter(n => n.status === 'pending');
-                } else {
-                    notifications = notifications.filter(n => n.username !== currentUser);
-                }
-                saveData();
-                showToast('Уведомления очищены');
-            });
-
-            // ----- VICTOR VIDEO MODAL -----
-            closeVictorVideoModal.addEventListener('click', () => {
-                victorVideoModal.classList.remove('open');
-                victorVideoIframe.src = '';
-            });
-            victorVideoModal.addEventListener('click', (e) => {
-                if (e.target === victorVideoModal) {
-                    victorVideoModal.classList.remove('open');
-                    victorVideoIframe.src = '';
-                }
-            });
-
-            // ----- USER PROFILE MODAL -----
-            closeUserProfileModal.addEventListener('click', () => {
-                userProfileModal.classList.remove('open');
-            });
-            userProfileModal.addEventListener('click', (e) => {
-                if (e.target === userProfileModal) {
-                    userProfileModal.classList.remove('open');
-                }
-            });
-
-            // ----- ИНИЦИАЛИЗАЦИЯ -----
-            loadData();
-
-            // Обработчики
-            loginBtn.addEventListener('click', () => login(loginInput.value.trim(), passInput.value.trim()));
-
-            registerBtn.addEventListener('click', () => {
-                registerModal.classList.add('open');
-                regLogin.value = '';
-                regPassword.value = '';
-            });
-
-            closeRegisterModal.addEventListener('click', () => {
-                registerModal.classList.remove('open');
-            });
-
-            registerModal.addEventListener('click', (e) => {
-                if (e.target === registerModal) registerModal.classList.remove('open');
-            });
-
-            registerConfirmBtn.addEventListener('click', () => {
-                registerUser(regLogin.value.trim(), regPassword.value.trim());
-            });
-
-            regLogin.addEventListener('keydown', (e) => { if (e.key === 'Enter') regPassword.focus(); });
-            regPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerConfirmBtn.click(); });
-
-            logoutBtn.addEventListener('click', logout);
-
-            addBtn.addEventListener('click', () => {
-                if (!isAdmin) { showToast('Требуется авторизация'); return; }
-                addLevel(nameInp.value, authorInp.value, posInp.value, videoInp.value);
-            });
-
-            addVictorBtn.addEventListener('click', () => addVictor(victorInput.value, victorVideoInput.value));
-            victorInput.addEventListener('keydown', e => { if (e.key === 'Enter') addVictorBtn.click(); });
-            victorVideoInput.addEventListener('keydown', e => { if (e.key === 'Enter') addVictorBtn.click(); });
-
-            sendRequestBtn.addEventListener('click', sendRequest);
-            requestVideo.addEventListener('keydown', e => { if (e.key === 'Enter') sendRequest(); });
-
-            closeLevelPageBtn.addEventListener('click', closeLevelPage);
-            goHomeBtn.addEventListener('click', closeLevelPage);
-
-            document.querySelectorAll('#levelName, #levelAuthor, #levelPosition, #levelVideo').forEach(inp => {
-                inp.addEventListener('keydown', e => { if (e.key === 'Enter') addBtn.click(); });
-            });
-
-            const origSave = saveData;
-            saveData = function() {
-                origSave();
                 if (currentLevelId) {
                     const level = levels.find(l => l.id === currentLevelId);
                     if (level) renderVictors(level.victors || []);
                 }
-            };
+            }
 
-            renderTable();
-            renderLeaderboard();
+            // ===== Navigation =====
+            function switchView(view) {
+                if (document.getElementById('levelPage').classList.contains('active')) {
+                    return;
+                }
+                currentView = view;
+                document.getElementById('navLevelsBtn').classList.toggle('active', view === 'levels');
+                document.getElementById('navLeaderboardBtn').classList.toggle('active', view === 'leaderboard');
+
+                if (view === 'levels') {
+                    document.getElementById('mainView').style.display = 'block';
+                    document.getElementById('leaderboardPage').classList.remove('active');
+                    document.getElementById('leaderboardPage').style.display = 'none';
+                } else {
+                    document.getElementById('mainView').style.display = 'none';
+                    document.getElementById('leaderboardPage').style.display = 'block';
+                    document.getElementById('leaderboardPage').classList.add('active');
+                    renderLeaderboard();
+                }
+            }
+
+            // ===== Event Listeners =====
+            document.addEventListener('DOMContentLoaded', () => {
+                // Theme
+                const themeToggle = document.getElementById('themeToggle');
+                const themeLabel = document.getElementById('themeLabel');
+                const html = document.documentElement;
+                let currentTheme = localStorage.getItem('itdl-theme') || 'dark';
+                html.setAttribute('data-theme', currentTheme);
+                updateThemeLabel(currentTheme);
+                themeToggle.addEventListener('click', () => {
+                    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                    html.setAttribute('data-theme', next);
+                    localStorage.setItem('itdl-theme', next);
+                    updateThemeLabel(next);
+                });
+
+                function updateThemeLabel(theme) {
+                    const label = document.getElementById('themeLabel');
+                    label.textContent = theme === 'dark' ? 'Тёмная' : 'Светлая';
+                    document.getElementById('themeToggle').innerHTML =
+                        `<i class="fas ${theme === 'dark' ? 'fa-moon' : 'fa-sun'}"></i> <span id="themeLabel">${theme === 'dark' ? 'Тёмная' : 'Светлая'}</span>`;
+                }
+
+                // Navigation
+                document.getElementById('navLevelsBtn').addEventListener('click', () => switchView('levels'));
+                document.getElementById('navLeaderboardBtn').addEventListener('click', () => switchView('leaderboard'));
+
+                // Auth
+                document.getElementById('loginBtn').addEventListener('click', () => 
+                    login(document.getElementById('loginInput').value.trim(), document.getElementById('passInput').value.trim())
+                );
+                document.getElementById('logoutBtn').addEventListener('click', logout);
+                document.getElementById('registerBtn').addEventListener('click', () => {
+                    document.getElementById('registerModal').classList.add('open');
+                    document.getElementById('regLogin').value = '';
+                    document.getElementById('regPassword').value = '';
+                });
+                document.getElementById('closeRegisterModal').addEventListener('click', () => {
+                    document.getElementById('registerModal').classList.remove('open');
+                });
+                document.getElementById('registerModal').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) document.getElementById('registerModal').classList.remove('open');
+                });
+                document.getElementById('registerConfirmBtn').addEventListener('click', () => {
+                    registerUser(document.getElementById('regLogin').value.trim(), document.getElementById('regPassword').value.trim());
+                });
+                document.getElementById('regLogin').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') document.getElementById('regPassword').focus();
+                });
+                document.getElementById('regPassword').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') document.getElementById('registerConfirmBtn').click();
+                });
+
+                // Levels CRUD
+                document.getElementById('addLevelBtn').addEventListener('click', () => {
+                    if (!isAdmin) { showToast('Требуется авторизация'); return; }
+                    addLevel(
+                        document.getElementById('levelName').value,
+                        document.getElementById('levelAuthor').value,
+                        document.getElementById('levelPosition').value,
+                        document.getElementById('levelVideo').value
+                    );
+                });
+
+                // Sync
+                document.getElementById('syncBtn').addEventListener('click', syncData);
+
+                // Victor
+                document.getElementById('addVictorBtn').addEventListener('click', () => 
+                    addVictor(document.getElementById('victorInput').value, document.getElementById('victorVideoInput').value)
+                );
+                document.getElementById('victorInput').addEventListener('keydown', e => {
+                    if (e.key === 'Enter') document.getElementById('addVictorBtn').click();
+                });
+                document.getElementById('victorVideoInput').addEventListener('keydown', e => {
+                    if (e.key === 'Enter') document.getElementById('addVictorBtn').click();
+                });
+
+                // Request
+                document.getElementById('sendRequestBtn').addEventListener('click', sendRequest);
+                document.getElementById('requestVideo').addEventListener('keydown', e => {
+                    if (e.key === 'Enter') sendRequest();
+                });
+
+                // Level page
+                document.getElementById('closeLevelPage').addEventListener('click', closeLevelPage);
+                document.getElementById('goHomeBtn').addEventListener('click', closeLevelPage);
+
+                // Notifications
+                document.getElementById('notificationBell').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const dropdown = document.getElementById('notificationsDropdown');
+                    dropdown.classList.toggle('open');
+                    if (dropdown.classList.contains('open')) {
+                        updateNotifications();
+                    }
+                });
+                document.addEventListener('click', () => {
+                    document.getElementById('notificationsDropdown').classList.remove('open');
+                });
+                document.getElementById('clearNotifsBtn').addEventListener('click', () => {
+                    if (isAdmin) {
+                        notifications = notifications.filter(n => n.status === 'pending');
+                    } else {
+                        notifications = notifications.filter(n => n.username !== currentUser);
+                    }
+                    saveData();
+                    showToast('Уведомления очищены');
+                });
+
+                // Modals
+                document.getElementById('closeVictorVideoModal').addEventListener('click', () => {
+                    document.getElementById('victorVideoModal').classList.remove('open');
+                    document.getElementById('victorVideoIframe').src = '';
+                });
+                document.getElementById('victorVideoModal').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        document.getElementById('victorVideoModal').classList.remove('open');
+                        document.getElementById('victorVideoIframe').src = '';
+                    }
+                });
+                document.getElementById('closeUserProfileModal').addEventListener('click', () => {
+                    document.getElementById('userProfileModal').classList.remove('open');
+                });
+                document.getElementById('userProfileModal').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        document.getElementById('userProfileModal').classList.remove('open');
+                    }
+                });
+
+                // Enter key for login
+                document.getElementById('loginInput').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') document.getElementById('passInput').focus();
+                });
+                document.getElementById('passInput').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') document.getElementById('loginBtn').click();
+                });
+
+                // Load data
+                loadData();
+            });
+
         })();
     </script>
 </body>
