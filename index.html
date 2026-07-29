@@ -1,696 +1,1960 @@
 <!DOCTYPE html>
 <html lang="ru" data-theme="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GD Demon List · темы + админка</title>
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    /* ----- CSS Variables (темы) ----- */
-    :root {
-      --bg-body: #0b0d15;
-      --bg-surface: #1a1e2b;
-      --bg-surface2: #141926;
-      --bg-input: #10131f;
-      --bg-table-alt: #11161f;
-      --bg-hover: #2d3555;
-      --border-color: #2c324a;
-      --border-light: #3d445e;
-      --text-primary: #e8edf5;
-      --text-secondary: #b0bedd;
-      --text-muted: #5d6a8f;
-      --text-inverse: #0b0d15;
-      --accent: #ff7eb3;
-      --accent-hover: #ff5177;
-      --shadow: rgba(0,0,0,0.6);
-      --btn-bg: #2f3650;
-      --btn-border: #3f4668;
-      --badge-bg: #2a3150;
-      --danger: #c73b4b;
-      --danger-hover: #b02c3c;
-      --success: #2b8c5e;
-      --success-hover: #1f734b;
-      --input-border: #323a57;
-      --toast-bg: #1f263b;
-      --toast-border: #ff7eb3;
-      --table-header: #1b212f;
-      --table-border: #1e253b;
-      --gradient-start: #ff7eb3;
-      --gradient-end: #ff758c;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITDL · IzzoP Team Demon List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #0b0d15;
+            --bg-surface: #1a1e2b;
+            --bg-surface2: #141926;
+            --bg-input: #10131f;
+            --bg-table-alt: #11161f;
+            --bg-hover: #2d3555;
+            --border-color: #2c324a;
+            --border-light: #3d445e;
+            --text-primary: #e8edf5;
+            --text-secondary: #b0bedd;
+            --text-muted: #5d6a8f;
+            --text-inverse: #0b0d15;
+            --accent: #ff7eb3;
+            --accent-hover: #ff5177;
+            --shadow: rgba(0, 0, 0, 0.6);
+            --btn-bg: #2f3650;
+            --btn-border: #3f4668;
+            --badge-bg: #2a3150;
+            --danger: #c73b4b;
+            --danger-hover: #b02c3c;
+            --success: #2b8c5e;
+            --success-hover: #1f734b;
+            --input-border: #323a57;
+            --toast-bg: #1f263b;
+            --toast-border: #ff7eb3;
+            --table-header: #1b212f;
+            --table-border: #1e253b;
+            --gradient-start: #ff7eb3;
+            --gradient-end: #ff758c;
+            --card-bg: #181e2d;
+            --victor-bg: #1f263b;
+            --thumbnail-bg: #0f121e;
+            --notification-bg: #1f263b;
+            --notification-hover: #2d3555;
+            --notification-border: #3d445e;
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+        }
 
-    [data-theme="light"] {
-      --bg-body: #f2f4fa;
-      --bg-surface: #ffffff;
-      --bg-surface2: #f0f2f8;
-      --bg-input: #ffffff;
-      --bg-table-alt: #f8f9fe;
-      --bg-hover: #e6e9f2;
-      --border-color: #d0d5e0;
-      --border-light: #c2c8d6;
-      --text-primary: #1a1f2e;
-      --text-secondary: #3c445e;
-      --text-muted: #7a85a5;
-      --text-inverse: #ffffff;
-      --accent: #d94f7a;
-      --accent-hover: #c43d67;
-      --shadow: rgba(0,0,0,0.08);
-      --btn-bg: #e2e6f0;
-      --btn-border: #c8cedc;
-      --badge-bg: #dde2ef;
-      --danger: #b52c3c;
-      --danger-hover: #9e2332;
-      --success: #1f7a4e;
-      --success-hover: #16633e;
-      --input-border: #ccd2e0;
-      --toast-bg: #ffffff;
-      --toast-border: #d94f7a;
-      --table-header: #e9ecf5;
-      --table-border: #d8dce8;
-      --gradient-start: #d94f7a;
-      --gradient-end: #c73b6b;
-    }
+        [data-theme="light"] {
+            --bg-body: #f2f4fa;
+            --bg-surface: #ffffff;
+            --bg-surface2: #f0f2f8;
+            --bg-input: #ffffff;
+            --bg-table-alt: #f8f9fe;
+            --bg-hover: #e6e9f2;
+            --border-color: #d0d5e0;
+            --border-light: #c2c8d6;
+            --text-primary: #1a1f2e;
+            --text-secondary: #3c445e;
+            --text-muted: #7a85a5;
+            --text-inverse: #ffffff;
+            --accent: #d94f7a;
+            --accent-hover: #c43d67;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --btn-bg: #e2e6f0;
+            --btn-border: #c8cedc;
+            --badge-bg: #dde2ef;
+            --danger: #b52c3c;
+            --danger-hover: #9e2332;
+            --success: #1f7a4e;
+            --success-hover: #16633e;
+            --input-border: #ccd2e0;
+            --toast-bg: #ffffff;
+            --toast-border: #d94f7a;
+            --table-header: #e9ecf5;
+            --table-border: #d8dce8;
+            --gradient-start: #d94f7a;
+            --gradient-end: #c73b6b;
+            --card-bg: #ffffff;
+            --victor-bg: #eef0f6;
+            --thumbnail-bg: #e2e6f0;
+            --notification-bg: #ffffff;
+            --notification-hover: #eef0f6;
+            --notification-border: #d0d5e0;
+            --gold: #d4a800;
+            --silver: #a0a0a0;
+            --bronze: #b87333;
+        }
 
-    /* ----- общие стили ----- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s, box-shadow 0.2s;
-    }
-    body {
-      background: var(--bg-body);
-      color: var(--text-primary);
-      min-height: 100vh;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .container {
-      max-width: 1200px;
-      width: 100%;
-    }
-    /* header */
-    .header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 24px;
-      background: var(--bg-surface);
-      border-radius: 32px;
-      margin-bottom: 30px;
-      box-shadow: 0 8px 24px var(--shadow);
-      border: 1px solid var(--border-color);
-    }
-    .logo {
-      font-size: 28px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: -0.5px;
-    }
-    .logo i {
-      background: none;
-      -webkit-text-fill-color: var(--accent);
-      margin-right: 8px;
-    }
-    .header-controls {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .auth-section {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .auth-section input {
-      padding: 8px 14px;
-      border-radius: 40px;
-      border: 1px solid var(--input-border);
-      background: var(--bg-input);
-      color: var(--text-primary);
-      outline: none;
-      width: 140px;
-    }
-    .auth-section input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(255, 126, 179, 0.2);
-    }
-    .btn {
-      background: var(--btn-bg);
-      border: 1px solid var(--btn-border);
-      padding: 8px 18px;
-      border-radius: 40px;
-      color: var(--text-primary);
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .btn-primary {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: var(--text-inverse);
-    }
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      transform: scale(1.02);
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border-light);
-    }
-    .btn-outline:hover {
-      background: var(--bg-hover);
-    }
-    .btn-danger {
-      background: var(--danger);
-      border-color: var(--danger);
-      color: white;
-    }
-    .btn-danger:hover {
-      background: var(--danger-hover);
-    }
-    .btn-success {
-      background: var(--success);
-      border-color: var(--success);
-      color: white;
-    }
-    .btn-success:hover {
-      background: var(--success-hover);
-    }
-    .theme-toggle {
-      background: transparent;
-      border: 1px solid var(--border-light);
-      border-radius: 40px;
-      padding: 8px 14px;
-      color: var(--text-primary);
-      cursor: pointer;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .theme-toggle:hover {
-      background: var(--bg-hover);
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            transition: background 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        body {
+            background: var(--bg-body);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: var(--bg-surface);
+            border-radius: 32px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px var(--shadow);
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+        }
+        .logo i {
+            background: none;
+            -webkit-text-fill-color: var(--accent);
+            margin-right: 8px;
+        }
+        .logo-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            -webkit-text-fill-color: var(--text-muted);
+            margin-left: 6px;
+            font-weight: 400;
+        }
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links {
+            display: flex;
+            gap: 6px;
+        }
+        .nav-links .btn {
+            font-size: 14px;
+            padding: 6px 16px;
+        }
+        .nav-links .btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--text-inverse);
+        }
+        .auth-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .auth-section input {
+            padding: 8px 14px;
+            border-radius: 40px;
+            border: 1px solid var(--input-border);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            outline: none;
+            width: 140px;
+        }
+        .auth-section input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(255, 126, 179, 0.2);
+        }
+        .btn {
+            background: var(--btn-bg);
+            border: 1px solid var(--btn-border);
+            padding: 8px 18px;
+            border-radius: 40px;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--text-inverse);
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-light);
+        }
+        .btn-outline:hover {
+            background: var(--bg-hover);
+        }
+        .btn-danger {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+        .btn-success {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+        .btn-success:hover {
+            background: var(--success-hover);
+        }
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 13px;
+        }
+        .btn-icon {
+            padding: 4px 8px;
+            font-size: 12px;
+            min-width: 28px;
+            justify-content: center;
+        }
+        .theme-toggle {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 8px 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+        }
 
-    .admin-panel {
-      background: var(--bg-surface2);
-      border-radius: 28px;
-      padding: 24px;
-      margin-bottom: 30px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 4px 20px var(--shadow);
-    }
-    .admin-panel h3 {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      font-weight: 400;
-      color: var(--text-secondary);
-    }
-    .admin-panel h3 i {
-      color: var(--accent);
-    }
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 16px;
-      align-items: flex-end;
-    }
-    .form-group {
-      flex: 1 0 160px;
-      min-width: 140px;
-    }
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: 40px;
-      border: 1px solid var(--input-border);
-      background: var(--bg-input);
-      color: var(--text-primary);
-    }
-    .form-group input:focus {
-      border-color: var(--accent);
-      outline: none;
-    }
-    .table-wrap {
-      overflow-x: auto;
-      border-radius: 20px;
-      background: var(--bg-table-alt);
-      padding: 4px;
-      border: 1px solid var(--border-color);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 15px;
-    }
-    th {
-      text-align: left;
-      padding: 16px 12px;
-      background: var(--table-header);
-      color: var(--text-secondary);
-      font-weight: 500;
-      border-bottom: 1px solid var(--table-border);
-    }
-    td {
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--table-border);
-      vertical-align: middle;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    .level-name {
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-    .level-author {
-      color: var(--text-secondary);
-      font-size: 14px;
-    }
-    .position-badge {
-      background: var(--badge-bg);
-      padding: 4px 12px;
-      border-radius: 40px;
-      font-size: 14px;
-      font-weight: 600;
-      display: inline-block;
-    }
-    .actions i {
-      margin: 0 6px;
-      cursor: pointer;
-      transition: 0.2s;
-      padding: 6px;
-      border-radius: 30px;
-      background: var(--bg-surface);
-      width: 32px;
-      text-align: center;
-      color: var(--text-secondary);
-    }
-    .actions i:hover {
-      background: var(--bg-hover);
-      color: var(--accent);
-    }
-    .empty-state {
-      text-align: center;
-      padding: 40px 0;
-      color: var(--text-muted);
-    }
-    .footer {
-      margin-top: 30px;
-      color: var(--text-muted);
-      font-size: 14px;
-      text-align: center;
-    }
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: var(--toast-bg);
-      padding: 14px 24px;
-      border-radius: 60px;
-      border-left: 6px solid var(--toast-border);
-      box-shadow: 0 12px 30px var(--shadow);
-      font-weight: 500;
-      color: var(--text-primary);
-      z-index: 999;
-      transform: translateY(0);
-      opacity: 1;
-      transition: opacity 0.3s, transform 0.3s;
-    }
-    .toast.hidden {
-      opacity: 0;
-      transform: translateY(20px);
-      pointer-events: none;
-    }
-    /* мобильная адаптация */
-    @media (max-width: 700px) {
-      .header { flex-direction: column; align-items: stretch; gap: 12px; }
-      .header-controls { flex-direction: column; align-items: stretch; }
-      .auth-section { flex-wrap: wrap; }
-      .auth-section input { width: 100%; }
-    }
-  </style>
+        .admin-panel {
+            background: var(--bg-surface2);
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px var(--shadow);
+        }
+        .admin-panel h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+        .admin-panel h3 i {
+            color: var(--accent);
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 16px;
+            align-items: flex-end;
+        }
+        .form-group {
+            flex: 1 0 150px;
+            min-width: 130px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 1px solid var(--input-border);
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+        .form-group input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 20px;
+            background: var(--bg-table-alt);
+            padding: 4px;
+            border: 1px solid var(--border-color);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 15px;
+        }
+        th {
+            text-align: left;
+            padding: 16px 12px;
+            background: var(--table-header);
+            color: var(--text-secondary);
+            font-weight: 500;
+            border-bottom: 1px solid var(--table-border);
+        }
+        td {
+            padding: 12px 12px;
+            border-bottom: 1px solid var(--table-border);
+            vertical-align: middle;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .level-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .level-name:hover {
+            color: var(--accent);
+        }
+        .level-author {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .position-badge {
+            background: var(--badge-bg);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .points-badge {
+            background: var(--badge-bg);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            color: var(--gold);
+        }
+        .points-badge.top1 { color: var(--gold); background: rgba(255, 215, 0, 0.15); }
+        .points-badge.top2 { color: var(--silver); background: rgba(192, 192, 192, 0.15); }
+        .points-badge.top3 { color: var(--bronze); background: rgba(205, 127, 50, 0.15); }
+        .actions i {
+            margin: 0 4px;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 6px;
+            border-radius: 30px;
+            background: var(--bg-surface);
+            width: 32px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .actions i:hover {
+            background: var(--bg-hover);
+            color: var(--accent);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-muted);
+        }
+        .footer {
+            margin-top: 30px;
+            color: var(--text-muted);
+            font-size: 14px;
+            text-align: center;
+        }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--toast-bg);
+            padding: 14px 24px;
+            border-radius: 60px;
+            border-left: 6px solid var(--toast-border);
+            box-shadow: 0 12px 30px var(--shadow);
+            font-weight: 500;
+            color: var(--text-primary);
+            z-index: 999;
+            transform: translateY(0);
+            opacity: 1;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .toast.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            font-size: 22px;
+            color: var(--text-secondary);
+            padding: 6px 10px;
+            border-radius: 40px;
+            transition: 0.2s;
+        }
+        .notification-bell:hover {
+            background: var(--bg-hover);
+            color: var(--accent);
+        }
+        .notification-bell .badge {
+            position: absolute;
+            top: -6px;
+            right: -4px;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .notifications-dropdown {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            width: 380px;
+            max-height: 420px;
+            overflow-y: auto;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px var(--shadow);
+            z-index: 100;
+            display: none;
+            padding: 16px;
+        }
+        .notifications-dropdown.open {
+            display: block;
+        }
+        .notifications-dropdown .notif-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .notifications-dropdown .notif-header h4 {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .notif-item {
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: var(--notification-bg);
+            border: 1px solid var(--notification-border);
+            margin-bottom: 8px;
+            transition: 0.2s;
+        }
+        .notif-item:hover {
+            background: var(--notification-hover);
+        }
+        .notif-item .notif-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .notif-item .notif-detail {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .notif-item .notif-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .notif-item .notif-time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .notif-empty {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 30px 0;
+        }
+        .notif-item.status-approved {
+            border-left: 4px solid var(--success);
+        }
+        .notif-item.status-rejected {
+            border-left: 4px solid var(--danger);
+        }
+        .notif-item.status-pending {
+            border-left: 4px solid var(--accent);
+        }
+
+        .video-thumb {
+            width: 120px;
+            height: 68px;
+            border-radius: 12px;
+            background: var(--thumbnail-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+        }
+        .video-thumb:hover {
+            transform: scale(1.03);
+            border-color: var(--accent);
+        }
+        .video-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video-thumb .play-icon {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+            pointer-events: none;
+        }
+        .video-thumb .no-video-icon {
+            color: var(--text-muted);
+            font-size: 22px;
+        }
+        .td-thumb {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .td-thumb .info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .level-page {
+            display: none;
+            background: var(--bg-surface2);
+            border-radius: 28px;
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+        .level-page.active {
+            display: block;
+        }
+        .level-page .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .level-page h2 {
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+        .level-page .author {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+        .level-page .level-points {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid var(--gold);
+        }
+        .level-page .video-section {
+            margin: 24px 0;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+        }
+        .level-page .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .level-page .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .level-page .video-section .no-video {
+            color: var(--text-muted);
+            text-align: center;
+            padding: 40px 0;
+            font-size: 18px;
+        }
+        .level-page .video-section .no-video i {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .level-page .victors-section {
+            margin-top: 20px;
+        }
+        .level-page .victors-section h4 {
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+        }
+        .victor-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .victor-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--victor-bg);
+            padding: 6px 14px 6px 18px;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .victor-item .victor-name {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .victor-item .victor-name:hover {
+            color: var(--accent);
+        }
+        .victor-item .victor-name i {
+            color: var(--accent);
+            font-size: 12px;
+        }
+        .victor-item .victor-video-icon {
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-left: 2px;
+        }
+        .victor-item .victor-delete {
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 2px 6px;
+            border-radius: 30px;
+            transition: 0.2s;
+            background: transparent;
+            border: none;
+        }
+        .victor-item .victor-delete:hover {
+            color: var(--danger);
+            background: rgba(199, 59, 75, 0.15);
+        }
+        .admin-victor-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+            align-items: center;
+        }
+        .admin-victor-form input {
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid var(--input-border);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            flex: 1 0 160px;
+        }
+
+        .request-section {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .request-section h4 {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .request-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        .request-form input {
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid var(--input-border);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            flex: 2 0 200px;
+            min-width: 150px;
+        }
+
+        /* Leaderboard */
+        .leaderboard-page {
+            display: none;
+            background: var(--bg-surface2);
+            border-radius: 28px;
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+        .leaderboard-page.active {
+            display: block;
+        }
+        .leaderboard-page h2 {
+            margin-bottom: 20px;
+        }
+        .lb-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 16px;
+            border-radius: 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .lb-user:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent);
+        }
+        .lb-user .lb-rank {
+            font-weight: 700;
+            font-size: 18px;
+            min-width: 40px;
+            color: var(--text-muted);
+        }
+        .lb-user .lb-rank.gold { color: var(--gold); }
+        .lb-user .lb-rank.silver { color: var(--silver); }
+        .lb-user .lb-rank.bronze { color: var(--bronze); }
+        .lb-user .lb-name {
+            font-weight: 600;
+            flex: 1;
+        }
+        .lb-user .lb-points {
+            font-weight: 700;
+            color: var(--gold);
+        }
+        .lb-user .lb-levels {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* User profile modal */
+        .user-profile-modal .modal {
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .user-profile-modal .profile-levels {
+            margin-top: 16px;
+        }
+        .user-profile-modal .profile-level-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        .user-profile-modal .profile-level-item .pl-name {
+            cursor: pointer;
+            color: var(--accent);
+        }
+        .user-profile-modal .profile-level-item .pl-name:hover {
+            text-decoration: underline;
+        }
+        .user-profile-modal .profile-level-item .pl-points {
+            font-weight: 600;
+            color: var(--gold);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal {
+            background: var(--bg-surface);
+            border-radius: 32px;
+            padding: 32px;
+            max-width: 420px;
+            width: 90%;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 60px var(--shadow);
+            position: relative;
+        }
+        .modal h2 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+        .modal .form-group {
+            margin-bottom: 16px;
+        }
+        .modal .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .modal .form-group input {
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 40px;
+            border: 1px solid var(--input-border);
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+        .modal .form-group input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+        .modal .btn {
+            width: 100%;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .modal .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+        }
+
+        .victor-video-modal .modal {
+            max-width: 560px;
+        }
+        .victor-video-modal .video-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .victor-video-modal .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .header-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .auth-section {
+                flex-wrap: wrap;
+            }
+            .auth-section input {
+                width: 100%;
+            }
+            .video-thumb {
+                width: 80px;
+                height: 48px;
+            }
+            .td-thumb {
+                gap: 10px;
+            }
+            .notifications-dropdown {
+                width: 90vw;
+                right: 5vw;
+                left: 5vw;
+                top: 80px;
+            }
+            .level-page .level-header {
+                flex-direction: column;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="container" id="app">
-  <!-- Шапка -->
-  <header class="header">
-    <div class="logo"><i class="fas fa-skull"></i> Demon List</div>
-    <div class="header-controls">
-      <div class="auth-section" id="authSection">
-        <input type="text" id="loginInput" placeholder="Логин" value="admin">
-        <input type="password" id="passInput" placeholder="Пароль" value="123">
-        <button class="btn btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Вход</button>
-        <button class="btn btn-outline" id="logoutBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Выйти</button>
-      </div>
-      <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span id="themeLabel">Тёмная</span></button>
+    <div class="container" id="app">
+        <header class="header">
+            <div class="logo" id="goHomeBtn">
+                <i class="fas fa-skull"></i> ITDL
+                <span class="logo-sub">(izzoPTeamDemonList)</span>
+            </div>
+            <div class="header-controls">
+                <div class="nav-links">
+                    <button class="btn active" id="navLevelsBtn"><i class="fas fa-list"></i> Уровни</button>
+                    <button class="btn" id="navLeaderboardBtn"><i class="fas fa-trophy"></i> Лидерборд</button>
+                </div>
+                <div class="auth-section" id="authSection">
+                    <input type="text" id="loginInput" placeholder="Логин">
+                    <input type="password" id="passInput" placeholder="Пароль">
+                    <button class="btn btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Вход</button>
+                    <button class="btn btn-outline" id="registerBtn"><i class="fas fa-user-plus"></i> Регистрация</button>
+                    <button class="btn btn-outline" id="logoutBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                </div>
+                <div class="notification-bell" id="notificationBell">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge" id="notifBadge" style="display:none;">0</span>
+                </div>
+                <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span id="themeLabel">Тёмная</span></button>
+            </div>
+            <div class="notifications-dropdown" id="notificationsDropdown">
+                <div class="notif-header">
+                    <h4><i class="fas fa-bell"></i> Уведомления</h4>
+                    <button class="btn btn-sm btn-outline" id="clearNotifsBtn">Очистить</button>
+                </div>
+                <div id="notifList"></div>
+            </div>
+        </header>
+
+        <div class="modal-overlay" id="registerModal">
+            <div class="modal">
+                <button class="close-modal" id="closeRegisterModal">&times;</button>
+                <h2><i class="fas fa-user-plus"></i> Регистрация</h2>
+                <div class="form-group">
+                    <label>Логин</label>
+                    <input type="text" id="regLogin" placeholder="Придумайте логин">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="regPassword" placeholder="Придумайте пароль">
+                </div>
+                <button class="btn btn-success" id="registerConfirmBtn"><i class="fas fa-check"></i> Зарегистрироваться</button>
+            </div>
+        </div>
+
+        <div class="modal-overlay victor-video-modal" id="victorVideoModal">
+            <div class="modal">
+                <button class="close-modal" id="closeVictorVideoModal">&times;</button>
+                <h2 id="victorVideoTitle">Прохождение</h2>
+                <div class="video-wrapper">
+                    <iframe id="victorVideoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay user-profile-modal" id="userProfileModal">
+            <div class="modal">
+                <button class="close-modal" id="closeUserProfileModal">&times;</button>
+                <h2 id="userProfileName">Пользователь</h2>
+                <div style="text-align:center;margin-bottom:12px;">
+                    <span style="font-size:24px;font-weight:700;color:var(--gold);" id="userProfilePoints">0 очков</span>
+                </div>
+                <div class="profile-levels" id="userProfileLevels"></div>
+            </div>
+        </div>
+
+        <div id="mainView">
+            <div class="admin-panel" id="adminPanel" style="display:none;">
+                <h3><i class="fas fa-crown"></i> Админ-панель</h3>
+                <div class="form-row">
+                    <div class="form-group"><label>Название</label><input type="text" id="levelName" placeholder="Bloodbath" value="foggy morning"></div>
+                    <div class="form-group"><label>Автор</label><input type="text" id="levelAuthor" placeholder="Riot" value="NikSupchik"></div>
+                    <div class="form-group"><label>Позиция</label><input type="number" id="levelPosition" placeholder="1" value="1"></div>
+                    <div class="form-group"><label>Видео (YouTube)</label><input type="text" id="levelVideo" placeholder="https://youtube.com/watch?v=..." value="https://www.youtube.com/watch?v=0zL5rYV0mE8"></div>
+                    <button class="btn btn-success" id="addLevelBtn"><i class="fas fa-plus"></i> Добавить</button>
+                </div>
+                <div style="margin-top:12px; display:flex; gap:12px; flex-wrap:wrap;">
+                    <small style="color:var(--text-muted);"><i class="fas fa-info-circle"></i> Баллы: топ-1=300, топ-2=270, топ-3=245, топ-4=225, топ-5=210, топ-6=195, топ-7=180, топ-8=165, топ-9=150, топ-10=135, топ-11=120, далее -5 (топ-12=115, топ-13=110...)</small>
+                </div>
+            </div>
+
+            <div class="table-wrap" id="levelsTableWrap">
+                <table>
+                    <thead><tr><th>#</th><th>Уровень</th><th>Автор</th><th style="text-align:center;">Баллы</th><th style="text-align:center;">Видео</th><th style="text-align:center;">Действия</th></tr></thead>
+                    <tbody id="levelTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="level-page" id="levelPage">
+            <div class="level-header">
+                <div>
+                    <h2 id="lpName">foggy morning</h2>
+                    <div class="author" id="lpAuthor">Автор: NikSupchik</div>
+                </div>
+                <div>
+                    <span class="level-points" id="lpPoints">300 points</span>
+                    <button class="btn btn-outline" id="closeLevelPage" style="margin-left:12px;"><i class="fas fa-arrow-left"></i> Назад</button>
+                </div>
+            </div>
+
+            <div class="video-section">
+                <div id="lpVideoContainer">
+                    <div class="video-wrapper" id="videoWrapper">
+                        <iframe id="lpVideo" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div id="lpNoVideo" class="no-video" style="display:none;">
+                    <i class="fas fa-video-slash"></i>
+                    <span>Видео не добавлено</span>
+                </div>
+            </div>
+
+            <div class="victors-section">
+                <h4><i class="fas fa-users"></i> Викторы (победители) <span style="font-weight:400;font-size:13px;color:var(--text-muted);">— нажмите на имя для просмотра прохождения</span></h4>
+                <div class="victor-list" id="victorList"></div>
+                <div class="admin-victor-form" id="victorForm" style="display:none;">
+                    <input type="text" id="victorInput" placeholder="Имя виктора" value="Nexus">
+                    <input type="text" id="victorVideoInput" placeholder="Ссылка на видео прохождения" value="">
+                    <button class="btn btn-success" id="addVictorBtn"><i class="fas fa-plus"></i> Добавить</button>
+                </div>
+            </div>
+
+            <div class="request-section" id="requestSection" style="display:none;">
+                <h4><i class="fas fa-paper-plane"></i> Отправить заявку на прохождение</h4>
+                <div class="request-form">
+                    <input type="text" id="requestVideo" placeholder="Ссылка на видео YouTube с прохождением">
+                    <button class="btn btn-primary" id="sendRequestBtn"><i class="fas fa-send"></i> Отправить заявку</button>
+                </div>
+                <div style="margin-top:8px;">
+                    <small style="color:var(--text-muted);"><i class="fas fa-info-circle"></i> Ваша заявка будет рассмотрена администратором</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="leaderboard-page" id="leaderboardPage">
+            <h2><i class="fas fa-trophy"></i> Лидерборд</h2>
+            <div id="leaderboardList"></div>
+        </div>
+
+        <div class="footer"><i class="fas fa-code-branch"></i> ITDL · Лидерборд по очкам</div>
     </div>
-  </header>
 
-  <!-- Админ панель (видна только авторизованным) -->
-  <div class="admin-panel" id="adminPanel" style="display:none;">
-    <h3><i class="fas fa-crown"></i> Админ-панель · управление уровнями</h3>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Название уровня</label>
-        <input type="text" id="levelName" placeholder="e.g. Bloodbath" value="Bloodbath">
-      </div>
-      <div class="form-group">
-        <label>Автор</label>
-        <input type="text" id="levelAuthor" placeholder="Riot" value="Riot">
-      </div>
-      <div class="form-group">
-        <label>Позиция (число)</label>
-        <input type="number" id="levelPosition" placeholder="1" value="1">
-      </div>
-      <button class="btn btn-success" id="addLevelBtn"><i class="fas fa-plus"></i> Добавить</button>
-    </div>
-    <div style="margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap;">
-      <small style="color:var(--text-muted);"><i class="fas fa-info-circle"></i> Для удаления / изменения позиции — нажмите на иконки в таблице.</small>
-    </div>
-  </div>
+    <div id="toast" class="toast hidden">Уведомление</div>
 
-  <!-- Таблица уровней -->
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Уровень</th>
-          <th>Автор</th>
-          <th>Позиция</th>
-          <th style="text-align:center;">Действия</th>
-        </tr>
-      </thead>
-      <tbody id="levelTableBody">
-        <!-- рендерится через JS -->
-      </tbody>
-    </table>
-  </div>
-  <div class="footer">
-    <i class="fas fa-code-branch"></i> Данные хранятся в JSON · Редактирование через GitHub (симуляция)
-  </div>
-</div>
+    <script>
+        (function() {
+            "use strict";
 
-<!-- Toast уведомление -->
-<div id="toast" class="toast hidden">Уведомление</div>
+            // ----- ТЕМА -----
+            const themeToggle = document.getElementById('themeToggle');
+            const themeLabel = document.getElementById('themeLabel');
+            const html = document.documentElement;
+            let currentTheme = localStorage.getItem('itdl-theme') || 'dark';
+            html.setAttribute('data-theme', currentTheme);
+            updateThemeLabel(currentTheme);
+            themeToggle.addEventListener('click', () => {
+                const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('itdl-theme', next);
+                updateThemeLabel(next);
+            });
 
-<script>
-  (function() {
-    "use strict";
-
-    // ----- ТЕМА (dark/light) -----
-    const themeToggle = document.getElementById('themeToggle');
-    const themeLabel = document.getElementById('themeLabel');
-    const html = document.documentElement;
-    let currentTheme = localStorage.getItem('gd-theme') || 'dark';
-    html.setAttribute('data-theme', currentTheme);
-    updateThemeLabel(currentTheme);
-
-    themeToggle.addEventListener('click', () => {
-      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', next);
-      localStorage.setItem('gd-theme', next);
-      updateThemeLabel(next);
-    });
-
-    function updateThemeLabel(theme) {
-      themeLabel.textContent = theme === 'dark' ? 'Тёмная' : 'Светлая';
-      themeToggle.innerHTML = `<i class="fas ${theme === 'dark' ? 'fa-moon' : 'fa-sun'}"></i> <span id="themeLabel">${theme === 'dark' ? 'Тёмная' : 'Светлая'}</span>`;
-    }
-
-    // ----- СОСТОЯНИЕ -----
-    // Имитация базы данных (храним в localStorage для постоянства)
-    let levels = [];
-    let isAdmin = false; // авторизация
-
-    // DOM ссылки
-    const tbody = document.getElementById('levelTableBody');
-    const adminPanel = document.getElementById('adminPanel');
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const loginInput = document.getElementById('loginInput');
-    const passInput = document.getElementById('passInput');
-    const addBtn = document.getElementById('addLevelBtn');
-    const nameInp = document.getElementById('levelName');
-    const authorInp = document.getElementById('levelAuthor');
-    const posInp = document.getElementById('levelPosition');
-    const toastEl = document.getElementById('toast');
-    let toastTimeout = null;
-
-    // Загружаем данные из localStorage или используем дефолтные
-    function loadData() {
-      const stored = localStorage.getItem('gd_demon_levels');
-      if (stored) {
-        try {
-          levels = JSON.parse(stored);
-          return;
-        } catch (_) {}
-      }
-      // дефолтный список
-      levels = [
-        { id: 1, name: 'Bloodbath', author: 'Riot', position: 1 },
-        { id: 2, name: 'Sonic Wave', author: 'Cyclic', position: 2 },
-        { id: 3, name: 'Cataclysm', author: 'Ggb0y', position: 3 },
-        { id: 4, name: 'Aftermath', author: 'Kaba', position: 4 },
-      ];
-      saveData();
-    }
-
-    function saveData() {
-      localStorage.setItem('gd_demon_levels', JSON.stringify(levels));
-      renderTable();
-    }
-
-    // Генерация ID
-    function genId() {
-      return levels.length ? Math.max(...levels.map(l => l.id)) + 1 : 1;
-    }
-
-    // ----- РЕНДЕР ТАБЛИЦЫ -----
-    function renderTable() {
-      if (!tbody) return;
-      // сортировка по позиции
-      const sorted = [...levels].sort((a, b) => a.position - b.position);
-      if (sorted.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-ghost"></i> Нет уровней. Добавьте первый!</td></tr>`;
-        return;
-      }
-      let html = '';
-      sorted.forEach((level, index) => {
-        const realPos = level.position;
-        html += `<tr>
-          <td><span class="position-badge">${index + 1}</span></td>
-          <td><span class="level-name">${escapeHtml(level.name)}</span></td>
-          <td><span class="level-author">${escapeHtml(level.author)}</span></td>
-          <td>${realPos}</td>
-          <td style="text-align:center;" class="actions">
-            ${isAdmin ? `
-              <i class="fas fa-arrow-up" data-action="moveUp" data-id="${level.id}" title="Повысить позицию"></i>
-              <i class="fas fa-arrow-down" data-action="moveDown" data-id="${level.id}" title="Понизить позицию"></i>
-              <i class="fas fa-trash-alt" data-action="delete" data-id="${level.id}" style="color: var(--danger);" title="Удалить"></i>
-            ` : `
-              <span style="color:var(--text-muted); font-size:13px;"><i class="fas fa-lock"></i> авторизуйтесь</span>
-            `}
-          </td>
-        </tr>`;
-      });
-      tbody.innerHTML = html;
-
-      // вешаем события на кнопки (только если админ)
-      if (isAdmin) {
-        document.querySelectorAll('[data-action]').forEach(el => {
-          el.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const action = this.dataset.action;
-            const id = parseInt(this.dataset.id);
-            if (action === 'delete') {
-              deleteLevel(id);
-            } else if (action === 'moveUp') {
-              moveLevel(id, -1);
-            } else if (action === 'moveDown') {
-              moveLevel(id, 1);
+            function updateThemeLabel(theme) {
+                themeLabel.textContent = theme === 'dark' ? 'Тёмная' : 'Светлая';
+                themeToggle.innerHTML =
+                    `<i class="fas ${theme === 'dark' ? 'fa-moon' : 'fa-sun'}"></i> <span id="themeLabel">${theme === 'dark' ? 'Тёмная' : 'Светлая'}</span>`;
             }
-          });
-        });
-      }
-    }
 
-    // вспомогательный escape
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
+            // ----- ДАННЫЕ -----
+            let levels = [];
+            let users = [];
+            let notifications = [];
+            let currentUser = null;
+            let isAdmin = false;
+            let currentView = 'levels';
 
-    // ----- CRUD -----
-    function addLevel(name, author, position) {
-      if (!name.trim() || !author.trim()) {
-        showToast('Заполните название и автора');
-        return false;
-      }
-      const pos = parseInt(position);
-      if (isNaN(pos) || pos < 1) {
-        showToast('Позиция должна быть числом >= 1');
-        return false;
-      }
-      // проверяем уникальность позиции (но можно и дубли, но для демо лучше предупредим)
-      const exist = levels.some(l => l.position === pos);
-      if (exist) {
-        showToast(`Позиция ${pos} уже занята. Используйте другую.`);
-        return false;
-      }
-      const newLevel = {
-        id: genId(),
-        name: name.trim(),
-        author: author.trim(),
-        position: pos
-      };
-      levels.push(newLevel);
-      saveData();
-      showToast(`Уровень "${name}" добавлен!`);
-      return true;
-    }
+            // DOM
+            const tbody = document.getElementById('levelTableBody');
+            const adminPanel = document.getElementById('adminPanel');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const loginInput = document.getElementById('loginInput');
+            const passInput = document.getElementById('passInput');
+            const addBtn = document.getElementById('addLevelBtn');
+            const nameInp = document.getElementById('levelName');
+            const authorInp = document.getElementById('levelAuthor');
+            const posInp = document.getElementById('levelPosition');
+            const videoInp = document.getElementById('levelVideo');
+            const toastEl = document.getElementById('toast');
+            let toastTimeout = null;
 
-    function deleteLevel(id) {
-      if (!isAdmin) { showToast('Требуется авторизация'); return; }
-      const level = levels.find(l => l.id === id);
-      if (!level) return;
-      if (!confirm(`Удалить уровень "${level.name}"?`)) return;
-      levels = levels.filter(l => l.id !== id);
-      saveData();
-      showToast(`Уровень "${level.name}" удалён`);
-    }
+            const registerModal = document.getElementById('registerModal');
+            const regLogin = document.getElementById('regLogin');
+            const regPassword = document.getElementById('regPassword');
+            const registerConfirmBtn = document.getElementById('registerConfirmBtn');
+            const closeRegisterModal = document.getElementById('closeRegisterModal');
 
-    function moveLevel(id, direction) {
-      if (!isAdmin) { showToast('Требуется авторизация'); return; }
-      const index = levels.findIndex(l => l.id === id);
-      if (index === -1) return;
-      const current = levels[index];
-      // ищем уровень с позицией current.position + direction
-      const targetPos = current.position + direction;
-      const targetIndex = levels.findIndex(l => l.position === targetPos);
-      if (targetIndex === -1) {
-        // если нет цели — ничего не делаем
-        showToast('Нет уровня для обмена позицией');
-        return;
-      }
-      // меняем позиции
-      const target = levels[targetIndex];
-      [current.position, target.position] = [target.position, current.position];
-      saveData();
-      showToast(`Позиция обновлена: ${current.name} ↔ ${target.name}`);
-    }
+            const victorVideoModal = document.getElementById('victorVideoModal');
+            const victorVideoIframe = document.getElementById('victorVideoIframe');
+            const victorVideoTitle = document.getElementById('victorVideoTitle');
+            const closeVictorVideoModal = document.getElementById('closeVictorVideoModal');
 
-    // ----- АВТОРИЗАЦИЯ (простая, для демо) -----
-    function login(username, password) {
-      // фикс логин/пароль
-      if (username === 'admin' && password === '123') {
-        isAdmin = true;
-        document.getElementById('loginBtn').style.display = 'none';
-        document.getElementById('logoutBtn').style.display = 'inline-flex';
-        adminPanel.style.display = 'block';
-        renderTable();
-        showToast('Добро пожаловать, администратор!');
-        return true;
-      } else {
-        showToast('Неверный логин или пароль');
-        return false;
-      }
-    }
+            const userProfileModal = document.getElementById('userProfileModal');
+            const userProfileName = document.getElementById('userProfileName');
+            const userProfilePoints = document.getElementById('userProfilePoints');
+            const userProfileLevels = document.getElementById('userProfileLevels');
+            const closeUserProfileModal = document.getElementById('closeUserProfileModal');
 
-    function logout() {
-      isAdmin = false;
-      document.getElementById('loginBtn').style.display = 'inline-flex';
-      document.getElementById('logoutBtn').style.display = 'none';
-      adminPanel.style.display = 'none';
-      renderTable();
-      showToast('Вы вышли из админ-панели');
-    }
+            const levelPage = document.getElementById('levelPage');
+            const mainView = document.getElementById('mainView');
+            const leaderboardPage = document.getElementById('leaderboardPage');
+            const leaderboardList = document.getElementById('leaderboardList');
+            const navLevelsBtn = document.getElementById('navLevelsBtn');
+            const navLeaderboardBtn = document.getElementById('navLeaderboardBtn');
+            const levelsTableWrap = document.getElementById('levelsTableWrap');
 
-    // ----- TOAST -----
-    function showToast(msg) {
-      toastEl.textContent = msg;
-      toastEl.classList.remove('hidden');
-      clearTimeout(toastTimeout);
-      toastTimeout = setTimeout(() => {
-        toastEl.classList.add('hidden');
-      }, 3000);
-    }
+            const lpName = document.getElementById('lpName');
+            const lpAuthor = document.getElementById('lpAuthor');
+            const lpPoints = document.getElementById('lpPoints');
+            const lpVideo = document.getElementById('lpVideo');
+            const lpNoVideo = document.getElementById('lpNoVideo');
+            const videoWrapper = document.getElementById('videoWrapper');
+            const victorList = document.getElementById('victorList');
+            const victorForm = document.getElementById('victorForm');
+            const victorInput = document.getElementById('victorInput');
+            const victorVideoInput = document.getElementById('victorVideoInput');
+            const addVictorBtn = document.getElementById('addVictorBtn');
+            const closeLevelPageBtn = document.getElementById('closeLevelPage');
+            const goHomeBtn = document.getElementById('goHomeBtn');
+            const requestVideo = document.getElementById('requestVideo');
+            const sendRequestBtn = document.getElementById('sendRequestBtn');
+            const requestSection = document.getElementById('requestSection');
 
-    // ----- ИНИЦИАЛИЗАЦИЯ -----
-    loadData();
+            const notifBell = document.getElementById('notificationBell');
+            const notifDropdown = document.getElementById('notificationsDropdown');
+            const notifList = document.getElementById('notifList');
+            const notifBadge = document.getElementById('notifBadge');
+            const clearNotifsBtn = document.getElementById('clearNotifsBtn');
 
-    // если была сохранена сессия? нет, просто по умолчанию не админ
-    // но если хотим тестово — можно закомментировать:
-    // isAdmin = true; adminPanel.style.display = 'block'; renderTable(); // для быстрого теста
+            let currentLevelId = null;
 
-    // обработчики
-    loginBtn.addEventListener('click', () => {
-      const user = loginInput.value.trim();
-      const pass = passInput.value.trim();
-      login(user, pass);
-    });
+            // ----- РАСЧЁТ БАЛЛОВ (новая система: топ-1=300, топ-2=270, топ-3=245, топ-4=225, топ-5=210, топ-6=195, топ-7=180, топ-8=165, топ-9=150, топ-10=135, топ-11=120, далее -5) -----
+            function calculatePoints(position) {
+                const pointsMap = {
+                    1: 300, 2: 270, 3: 245, 4: 225, 5: 210,
+                    6: 195, 7: 180, 8: 165, 9: 150, 10: 135,
+                    11: 120
+                };
+                if (pointsMap[position] !== undefined) return pointsMap[position];
+                // после 11 места: 120 - (position - 11) * 5
+                const result = 120 - (position - 11) * 5;
+                return Math.max(result, 0);
+            }
 
-    logoutBtn.addEventListener('click', logout);
+            function getPointsClass(position) {
+                if (position === 1) return 'top1';
+                if (position === 2) return 'top2';
+                if (position === 3) return 'top3';
+                return '';
+            }
 
-    addBtn.addEventListener('click', () => {
-      if (!isAdmin) { showToast('Требуется авторизация'); return; }
-      const name = nameInp.value.trim();
-      const author = authorInp.value.trim();
-      const pos = posInp.value.trim();
-      if (addLevel(name, author, pos)) {
-        nameInp.value = '';
-        authorInp.value = '';
-        posInp.value = '';
-      }
-    });
+            // ----- ЗАГРУЗКА ДАННЫХ -----
+            function loadData() {
+                const storedLevels = localStorage.getItem('itdl_levels');
+                if (storedLevels) {
+                    try { levels = JSON.parse(storedLevels); } catch (_) {}
+                }
+                if (!levels || levels.length === 0) {
+                    levels = [
+                        { id: 1, name: 'foggy morning', author: 'NikSupchik', position: 1,
+                            video: 'https://www.youtube.com/watch?v=0zL5rYV0mE8', victors: [{name: 'NikSupchik', video: 'https://www.youtube.com/watch?v=0zL5rYV0mE8'}] },
+                        { id: 2, name: 'Bloodbath', author: 'Riot', position: 2,
+                            video: 'https://www.youtube.com/watch?v=7hJvG9nRZvo', victors: [{name: 'Riot', video: 'https://www.youtube.com/watch?v=7hJvG9nRZvo'}, {name: 'Nexus', video: ''}] },
+                        { id: 3, name: 'Sonic Wave', author: 'Cyclic', position: 3,
+                            video: 'https://youtu.be/k7rJ3k6t7UQ', victors: [{name: 'Cyclic', video: 'https://youtu.be/k7rJ3k6t7UQ'}] },
+                        { id: 4, name: 'Cataclysm', author: 'Ggb0y', position: 4, video: '', victors: [] },
+                        { id: 5, name: 'Aftermath', author: 'Kaba', position: 5, video: '', victors: [] },
+                        { id: 6, name: 'Digital Descent', author: 'Trick', position: 6, video: '', victors: [] },
+                        { id: 7, name: 'Artificial Ascent', author: 'Riot', position: 7, video: '', victors: [] },
+                        { id: 8, name: 'Sakupen Hell', author: 'Pam', position: 8, video: '', victors: [] },
+                        { id: 9, name: 'Rust', author: 'Neptune', position: 9, video: '', victors: [] },
+                        { id: 10, name: 'Kyouki', author: 'Tama', position: 10, video: '', victors: [] },
+                        { id: 11, name: 'Nhelv', author: 'TheRealX', position: 11, video: '', victors: [] },
+                        { id: 12, name: 'Cold Sweat', author: 'Moldy', position: 12, video: '', victors: [] },
+                        { id: 13, name: 'Arcturus', author: 'Rainbow', position: 13, video: '', victors: [] },
+                    ];
+                } else {
+                    levels = levels.map(l => {
+                        if (l.victors && l.victors.length > 0 && typeof l.victors[0] === 'string') {
+                            l.victors = l.victors.map(v => ({name: v, video: ''}));
+                        }
+                        if (!l.victors) l.victors = [];
+                        return l;
+                    });
+                }
 
-    // также Enter на полях
-    document.querySelectorAll('#levelName, #levelAuthor, #levelPosition').forEach(inp => {
-      inp.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') addBtn.click();
-      });
-    });
+                const storedUsers = localStorage.getItem('itdl_users');
+                if (storedUsers) {
+                    try { users = JSON.parse(storedUsers); } catch (_) {}
+                }
+                if (!users || users.length === 0) {
+                    users = [
+                        { username: 'admin', password: '123', isAdmin: true },
+                        { username: 'NikSupchik', password: '123', isAdmin: false },
+                        { username: 'Riot', password: '123', isAdmin: false },
+                        { username: 'Nexus', password: '123', isAdmin: false },
+                        { username: 'Cyclic', password: '123', isAdmin: false },
+                    ];
+                }
 
-    // Если уже админ — показать панель (но мы не храним сессию)
-    // для демо просто оставим как есть.
+                const storedNotifs = localStorage.getItem('itdl_notifications');
+                if (storedNotifs) {
+                    try { notifications = JSON.parse(storedNotifs); } catch (_) {}
+                }
+                if (!notifications) notifications = [];
 
-    // при загрузке рендер
-    renderTable();
+                const sessionUser = localStorage.getItem('itdl_session');
+                if (sessionUser) {
+                    const found = users.find(u => u.username === sessionUser);
+                    if (found) {
+                        currentUser = sessionUser;
+                        isAdmin = found.isAdmin || false;
+                        if (isAdmin) {
+                            adminPanel.style.display = 'block';
+                            loginBtn.style.display = 'none';
+                            logoutBtn.style.display = 'inline-flex';
+                            registerBtn.style.display = 'none';
+                        } else {
+                            adminPanel.style.display = 'none';
+                            loginBtn.style.display = 'none';
+                            logoutBtn.style.display = 'inline-flex';
+                            registerBtn.style.display = 'none';
+                        }
+                    }
+                }
 
-    // если вдруг захотим включить админку по умолчанию - раскомментировать:
-    // isAdmin = true; adminPanel.style.display = 'block'; loginBtn.style.display = 'none'; logoutBtn.style.display = 'inline-flex'; renderTable();
+                saveData();
+            }
 
-    // Поддержка темы при загрузке (уже есть)
+            function saveData() {
+                localStorage.setItem('itdl_levels', JSON.stringify(levels));
+                localStorage.setItem('itdl_users', JSON.stringify(users));
+                localStorage.setItem('itdl_notifications', JSON.stringify(notifications));
+                renderTable();
+                renderLeaderboard();
+                updateNotifications();
+            }
 
-    // Для демонстрации "регистрация" не реализована, но есть логин.
-    console.log('GD Demon List · темы + админка (данные в localStorage)');
-  })();
-</script>
+            function genId() { return levels.length ? Math.max(...levels.map(l => l.id)) + 1 : 1; }
+
+            function genNotifId() { return notifications.length ? Math.max(...notifications.map(n => n.id)) + 1 : 1; }
+
+            // ----- YOUTUBE ФУНКЦИИ -----
+            function extractYouTubeId(url) {
+                if (!url) return null;
+                const str = url.trim();
+                let m = str.match(/embed\/([a-zA-Z0-9_-]{11})/);
+                if (m) return m[1];
+                m = str.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+                if (m) return m[1];
+                m = str.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+                if (m) return m[1];
+                if (str.match(/^[a-zA-Z0-9_-]{11}$/)) return str;
+                return null;
+            }
+
+            function toEmbedUrl(url) {
+                const id = extractYouTubeId(url);
+                if (id) return `https://www.youtube.com/embed/${id}?autoplay=0&rel=0`;
+                return null;
+            }
+
+            function getThumbnailFromVideo(url) {
+                const id = extractYouTubeId(url);
+                if (id) return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+                return null;
+            }
+
+            // ----- УВЕДОМЛЕНИЯ -----
+            function addNotification(levelId, levelName, username, videoUrl, status, adminNote) {
+                const notif = {
+                    id: genNotifId(),
+                    levelId: levelId,
+                    levelName: levelName,
+                    username: username,
+                    videoUrl: videoUrl || '',
+                    status: status || 'pending',
+                    adminNote: adminNote || '',
+                    timestamp: new Date().toISOString(),
+                };
+                notifications.unshift(notif);
+                if (notifications.length > 100) notifications = notifications.slice(0, 100);
+                saveData();
+                updateNotifications();
+            }
+
+            function updateNotifications() {
+                const userNotifs = isAdmin ? notifications : notifications.filter(n => n.username === currentUser);
+                const pendingCount = isAdmin ? notifications.filter(n => n.status === 'pending').length : userNotifs.filter(n =>
+                    n.status !== 'pending').length;
+
+                if (pendingCount > 0) {
+                    notifBadge.style.display = 'flex';
+                    notifBadge.textContent = pendingCount;
+                } else {
+                    notifBadge.style.display = 'none';
+                }
+
+                renderNotifications(userNotifs);
+            }
+
+            function renderNotifications(notifs) {
+                if (!notifs || notifs.length === 0) {
+                    notifList.innerHTML = `<div class="notif-empty"><i class="fas fa-inbox"></i><p>Нет уведомлений</p></div>`;
+                    return;
+                }
+                let html = '';
+                notifs.forEach(n => {
+                    const statusClass = n.status === 'approved' ? 'status-approved' : n.status === 'rejected' ?
+                        'status-rejected' : 'status-pending';
+                    const statusText = n.status === 'approved' ? '✅ Одобрено' : n.status === 'rejected' ?
+                        '❌ Отклонено' : '⏳ На рассмотрении';
+                    const time = new Date(n.timestamp).toLocaleString('ru-RU');
+
+                    html += `<div class="notif-item ${statusClass}">
+                        <div class="notif-title">${n.levelName} — ${n.username}</div>
+                        <div class="notif-detail">${statusText} ${n.adminNote ? '· ' + n.adminNote : ''}</div>
+                        ${n.videoUrl ? `<div class="notif-detail"><i class="fas fa-video"></i> <a href="${n.videoUrl}" target="_blank" style="color:var(--accent);">Ссылка на видео</a></div>` : ''}
+                        ${isAdmin && n.status === 'pending' ? `
+                            <div class="notif-actions">
+                                <button class="btn btn-sm btn-success" onclick="window.approveRequest(${n.id})"><i class="fas fa-check"></i> Одобрить</button>
+                                <button class="btn btn-sm btn-danger" onclick="window.rejectRequest(${n.id})"><i class="fas fa-times"></i> Отклонить</button>
+                            </div>
+                        ` : ''}
+                        <div class="notif-time">${time}</div>
+                    </div>`;
+                });
+                notifList.innerHTML = html;
+            }
+
+            window.approveRequest = function(notifId) {
+                const notif = notifications.find(n => n.id === notifId);
+                if (!notif) return;
+                notif.status = 'approved';
+                const level = levels.find(l => l.id === notif.levelId);
+                if (level) {
+                    if (!level.victors) level.victors = [];
+                    if (!level.victors.find(v => v.name === notif.username)) {
+                        level.victors.push({name: notif.username, video: notif.videoUrl || ''});
+                    }
+                    if (!level.video && notif.videoUrl) {
+                        level.video = notif.videoUrl;
+                    }
+                }
+                saveData();
+                showToast(`Заявка ${notif.username} одобрена!`);
+                updateNotifications();
+                if (currentLevelId === notif.levelId) {
+                    openLevelPage(currentLevelId);
+                }
+            };
+
+            window.rejectRequest = function(notifId) {
+                const notif = notifications.find(n => n.id === notifId);
+                if (!notif) return;
+                notif.status = 'rejected';
+                saveData();
+                showToast(`Заявка ${notif.username} отклонена`);
+                updateNotifications();
+            };
+
+            // ----- ЛИДЕРБОРД -----
+            function getUserPoints(username) {
+                let total = 0;
+                levels.forEach(level => {
+                    if (level.victors && level.victors.find(v => v.name === username)) {
+                        total += calculatePoints(level.position);
+                    }
+                });
+                return total;
+            }
+
+            function renderLeaderboard() {
+                const sortedUsers = users
+                    .filter(u => !u.isAdmin)
+                    .map(u => ({
+                        username: u.username,
+                        points: getUserPoints(u.username),
+                        levels: levels.filter(l => l.victors && l.victors.find(v => v.name === u.username))
+                    }))
+                    .sort((a, b) => b.points - a.points);
+
+                if (sortedUsers.length === 0) {
+                    leaderboardList.innerHTML = `<div class="empty-state"><i class="fas fa-users"></i><p>Нет игроков</p></div>`;
+                    return;
+                }
+
+                let html = '';
+                sortedUsers.forEach((user, index) => {
+                    const rank = index + 1;
+                    let rankClass = '';
+                    if (rank === 1) rankClass = 'gold';
+                    else if (rank === 2) rankClass = 'silver';
+                    else if (rank === 3) rankClass = 'bronze';
+
+                    const levelNames = user.levels.map(l => l.name).join(', ');
+
+                    html += `<div class="lb-user" data-username="${user.username}">
+                        <span class="lb-rank ${rankClass}">#${rank}</span>
+                        <span class="lb-name">${escapeHtml(user.username)}</span>
+                        <span class="lb-points">${user.points} очков</span>
+                        <span class="lb-levels">${user.levels.length} уровней</span>
+                    </div>`;
+                });
+                leaderboardList.innerHTML = html;
+
+                document.querySelectorAll('.lb-user').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const username = this.dataset.username;
+                        openUserProfile(username);
+                    });
+                });
+            }
+
+            // ----- ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ -----
+            function openUserProfile(username) {
+                const user = users.find(u => u.username === username);
+                if (!user) { showToast('Пользователь не найден'); return; }
+                const userLevels = levels.filter(l => l.victors && l.victors.find(v => v.name === username));
+                const totalPoints = getUserPoints(username);
+
+                userProfileName.textContent = username;
+                userProfilePoints.textContent = `${totalPoints} очков`;
+
+                if (userLevels.length === 0) {
+                    userProfileLevels.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:20px 0;">Нет пройденных уровней</div>`;
+                } else {
+                    let html = '';
+                    userLevels.sort((a, b) => a.position - b.position).forEach(level => {
+                        const points = calculatePoints(level.position);
+                        html += `<div class="profile-level-item">
+                            <span class="pl-name" data-levelid="${level.id}">${escapeHtml(level.name)}</span>
+                            <span class="pl-points">${points} очков</span>
+                        </div>`;
+                    });
+                    userProfileLevels.innerHTML = html;
+
+                    document.querySelectorAll('.pl-name').forEach(el => {
+                        el.addEventListener('click', function() {
+                            const id = parseInt(this.dataset.levelid);
+                            userProfileModal.classList.remove('open');
+                            openLevelPage(id);
+                        });
+                    });
+                }
+
+                userProfileModal.classList.add('open');
+            }
+
+            // ----- РЕНДЕР ТАБЛИЦЫ -----
+            function renderTable() {
+                const sorted = [...levels].sort((a, b) => a.position - b.position);
+                if (sorted.length === 0) {
+                    tbody.innerHTML =
+                        `<tr><td colspan="6" class="empty-state"><i class="fas fa-ghost"></i> Нет уровней</td></tr>`;
+                    return;
+                }
+                let html = '';
+                sorted.forEach((level, index) => {
+                    const thumb = getThumbnailFromVideo(level.video);
+                    const has = thumb !== null;
+                    const thumbHtml = has ?
+                        `<img src="${thumb}" alt="thumbnail" loading="lazy" onerror="this.style.display='none'">` :
+                        `<i class="fas fa-video-slash no-video-icon"></i>`;
+                    const points = calculatePoints(level.position);
+                    const pointsClass = getPointsClass(level.position);
+
+                    html += `<tr>
+                        <td><span class="position-badge">${index + 1}</span></td>
+                        <td>
+                            <div class="td-thumb">
+                                <div class="video-thumb" data-id="${level.id}" title="Открыть уровень">
+                                    ${thumbHtml}
+                                    ${has ? '<i class="fas fa-play play-icon"></i>' : ''}
+                                </div>
+                                <div class="info">
+                                    <span class="level-name" data-id="${level.id}">${escapeHtml(level.name)}</span>
+                                    <span class="level-author">${escapeHtml(level.author)}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(level.author)}</td>
+                        <td><span class="points-badge ${pointsClass}">${points}</span></td>
+                        <td style="text-align:center;">
+                            ${has ? `<i class="fas fa-check-circle" style="color:var(--success);"></i>` : `<i class="fas fa-circle" style="color:var(--text-muted);"></i>`}
+                        </td>
+                        <td style="text-align:center;" class="actions">
+                            ${isAdmin ? `
+                                <i class="fas fa-arrow-up" data-action="moveUp" data-id="${level.id}" title="Повысить"></i>
+                                <i class="fas fa-arrow-down" data-action="moveDown" data-id="${level.id}" title="Понизить"></i>
+                                <i class="fas fa-trash-alt" data-action="delete" data-id="${level.id}" style="color: var(--danger);" title="Удалить"></i>
+                            ` : `<span style="color:var(--text-muted);font-size:13px;"><i class="fas fa-lock"></i></span>`}
+                        </td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+
+                document.querySelectorAll('.level-name, .video-thumb').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        let id = this.dataset.id;
+                        if (!id) {
+                            const parent = this.closest('.video-thumb');
+                            if (parent) id = parent.dataset.id;
+                        }
+                        if (id) openLevelPage(parseInt(id));
+                    });
+                });
+
+                if (isAdmin) {
+                    document.querySelectorAll('[data-action]').forEach(el => {
+                        el.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const action = this.dataset.action;
+                            const id = parseInt(this.dataset.id);
+                            if (action === 'delete') deleteLevel(id);
+                            else if (action === 'moveUp') moveLevel(id, -1);
+                            else if (action === 'moveDown') moveLevel(id, 1);
+                        });
+                    });
+                }
+            }
+
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // ----- CRUD -----
+            function addLevel(name, author, position, video) {
+                if (!name.trim() || !author.trim()) { showToast('Заполните название и автора'); return false; }
+                const pos = parseInt(position);
+                if (isNaN(pos) || pos < 1) { showToast('Позиция >= 1'); return false; }
+                if (levels.some(l => l.position === pos)) { showToast(`Позиция ${pos} занята`); return false; }
+                const newLevel = { id: genId(), name: name.trim(), author: author.trim(), position: pos,
+                    video: video.trim() || '', victors: [] };
+                levels.push(newLevel);
+                saveData();
+                showToast(`Уровень "${name}" добавлен!`);
+                return true;
+            }
+
+            function deleteLevel(id) {
+                if (!isAdmin) return;
+                const level = levels.find(l => l.id === id);
+                if (!level) return;
+                if (!confirm(`Удалить "${level.name}"?`)) return;
+                levels = levels.filter(l => l.id !== id);
+                saveData();
+                showToast(`"${level.name}" удалён`);
+                if (currentLevelId === id) closeLevelPage();
+            }
+
+            function moveLevel(id, direction) {
+                if (!isAdmin) return;
+                const index = levels.findIndex(l => l.id === id);
+                if (index === -1) return;
+                const current = levels[index];
+                const targetPos = current.position + direction;
+                const targetIndex = levels.findIndex(l => l.position === targetPos);
+                if (targetIndex === -1) { showToast('Нет уровня для обмена'); return; }
+                const target = levels[targetIndex];
+                [current.position, target.position] = [target.position, current.position];
+                saveData();
+                showToast('Позиция обновлена');
+            }
+
+            // ----- СТРАНИЦА УРОВНЯ -----
+            function openLevelPage(id) {
+                const level = levels.find(l => l.id === id);
+                if (!level) { showToast('Уровень не найден'); return; }
+                currentLevelId = id;
+                lpName.textContent = level.name;
+                lpAuthor.textContent = `Автор: ${level.author}`;
+                lpPoints.textContent = `${calculatePoints(level.position)} points`;
+
+                const embed = toEmbedUrl(level.video);
+                if (embed) {
+                    lpVideo.src = embed;
+                    videoWrapper.style.display = 'block';
+                    lpNoVideo.style.display = 'none';
+                } else {
+                    lpVideo.src = '';
+                    videoWrapper.style.display = 'none';
+                    lpNoVideo.style.display = 'block';
+                }
+
+                renderVictors(level.victors || []);
+                victorForm.style.display = isAdmin ? 'flex' : 'none';
+                requestSection.style.display = currentUser ? 'block' : 'none';
+
+                mainView.style.display = 'none';
+                leaderboardPage.classList.remove('active');
+                leaderboardPage.style.display = 'none';
+                levelPage.classList.add('active');
+                levelPage.style.display = 'block';
+            }
+
+            function closeLevelPage() {
+                mainView.style.display = 'block';
+                levelPage.classList.remove('active');
+                levelPage.style.display = 'none';
+                currentLevelId = null;
+                lpVideo.src = '';
+                if (currentView === 'leaderboard') {
+                    mainView.style.display = 'none';
+                    leaderboardPage.style.display = 'block';
+                    leaderboardPage.classList.add('active');
+                } else {
+                    mainView.style.display = 'block';
+                }
+            }
+
+            function renderVictors(victors) {
+                if (!victors || victors.length === 0) {
+                    victorList.innerHTML = `<span style="color:var(--text-muted);"><i class="fas fa-user-slash"></i> Нет викторов</span>`;
+                    return;
+                }
+                let html = '';
+                victors.forEach((v, idx) => {
+                    const hasVideo = v.video && v.video.trim() !== '';
+                    const isAdminUser = isAdmin;
+                    html += `<div class="victor-item">
+                        <span class="victor-name" data-video="${escapeHtml(v.video || '')}" data-name="${escapeHtml(v.name)}">
+                            <i class="fas fa-trophy"></i> ${escapeHtml(v.name)}
+                            ${hasVideo ? `<span class="victor-video-icon"><i class="fas fa-play-circle"></i></span>` : ''}
+                        </span>
+                        ${isAdminUser ? `<button class="victor-delete" data-index="${idx}" title="Удалить виктора"><i class="fas fa-times"></i></button>` : ''}
+                    </div>`;
+                });
+                victorList.innerHTML = html;
+
+                document.querySelectorAll('.victor-name').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const video = this.dataset.video;
+                        const name = this.dataset.name;
+                        if (video && video.trim() !== '') {
+                            const embed = toEmbedUrl(video);
+                            if (embed) {
+                                victorVideoTitle.textContent = `Прохождение — ${name}`;
+                                victorVideoIframe.src = embed;
+                                victorVideoModal.classList.add('open');
+                            } else {
+                                showToast('Некорректная ссылка на видео');
+                            }
+                        } else {
+                            showToast(`У ${name} нет видео прохождения`);
+                        }
+                    });
+                });
+
+                if (isAdmin) {
+                    document.querySelectorAll('.victor-delete').forEach(el => {
+                        el.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const index = parseInt(this.dataset.index);
+                            deleteVictor(index);
+                        });
+                    });
+                }
+            }
+
+            function deleteVictor(index) {
+                if (!isAdmin) return;
+                if (!currentLevelId) return;
+                const level = levels.find(l => l.id === currentLevelId);
+                if (!level) return;
+                if (!level.victors || index >= level.victors.length) return;
+                const name = level.victors[index].name;
+                if (!confirm(`Удалить виктора "${name}"?`)) return;
+                level.victors.splice(index, 1);
+                saveData();
+                renderVictors(level.victors);
+                showToast(`Виктор "${name}" удалён`);
+            }
+
+            function addVictor(name, video) {
+                if (!isAdmin) { showToast('Требуется авторизация'); return; }
+                if (!currentLevelId) { showToast('Откройте уровень'); return; }
+                const level = levels.find(l => l.id === currentLevelId);
+                if (!level) return;
+                const trimmed = name.trim();
+                if (!trimmed) { showToast('Введите имя'); return; }
+                if (!level.victors) level.victors = [];
+                if (level.victors.find(v => v.name === trimmed)) { showToast('Такой виктор уже есть'); return; }
+                level.victors.push({name: trimmed, video: video.trim() || ''});
+                saveData();
+                renderVictors(level.victors);
+                showToast(`Виктор "${trimmed}" добавлен`);
+            }
+
+            // ----- ОТПРАВКА ЗАЯВКИ -----
+            function sendRequest() {
+                if (!currentUser) { showToast('Войдите в аккаунт'); return; }
+                if (!currentLevelId) { showToast('Откройте уровень'); return; }
+                const level = levels.find(l => l.id === currentLevelId);
+                if (!level) return;
+                const videoUrl = requestVideo.value.trim();
+                if (!videoUrl) { showToast('Введите ссылку на видео'); return; }
+                if (!extractYouTubeId(videoUrl)) { showToast('Введите корректную ссылку YouTube'); return; }
+
+                const existing = notifications.find(n => n.levelId === currentLevelId && n.username === currentUser && n
+                    .status === 'pending');
+                if (existing) { showToast('Вы уже отправили заявку на этот уровень'); return; }
+
+                addNotification(currentLevelId, level.name, currentUser, videoUrl, 'pending');
+                showToast('Заявка отправлена!');
+                requestVideo.value = '';
+            }
+
+            // ----- НАВИГАЦИЯ -----
+            function switchView(view) {
+                if (levelPage.classList.contains('active')) {
+                    // Если страница уровня открыта, не переключаем
+                    return;
+                }
+                currentView = view;
+                navLevelsBtn.classList.toggle('active', view === 'levels');
+                navLeaderboardBtn.classList.toggle('active', view === 'leaderboard');
+
+                if (view === 'levels') {
+                    mainView.style.display = 'block';
+                    leaderboardPage.classList.remove('active');
+                    leaderboardPage.style.display = 'none';
+                } else {
+                    mainView.style.display = 'none';
+                    leaderboardPage.style.display = 'block';
+                    leaderboardPage.classList.add('active');
+                    renderLeaderboard();
+                }
+            }
+
+            navLevelsBtn.addEventListener('click', () => switchView('levels'));
+            navLeaderboardBtn.addEventListener('click', () => switchView('leaderboard'));
+
+            // ----- АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ -----
+            function login(username, password) {
+                const user = users.find(u => u.username === username && u.password === password);
+                if (!user) { showToast('Неверный логин или пароль'); return false; }
+                currentUser = username;
+                isAdmin = user.isAdmin || false;
+                localStorage.setItem('itdl_session', username);
+
+                loginBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-flex';
+                registerBtn.style.display = 'none';
+                if (isAdmin) adminPanel.style.display = 'block';
+                else adminPanel.style.display = 'none';
+
+                if (levelPage.classList.contains('active')) {
+                    requestSection.style.display = 'block';
+                    victorForm.style.display = isAdmin ? 'flex' : 'none';
+                }
+                renderTable();
+                renderLeaderboard();
+                updateNotifications();
+                showToast(`Добро пожаловать, ${username}!`);
+                return true;
+            }
+
+            function logout() {
+                currentUser = null;
+                isAdmin = false;
+                localStorage.removeItem('itdl_session');
+                loginBtn.style.display = 'inline-flex';
+                logoutBtn.style.display = 'none';
+                registerBtn.style.display = 'inline-flex';
+                adminPanel.style.display = 'none';
+                if (levelPage.classList.contains('active')) {
+                    requestSection.style.display = 'none';
+                    victorForm.style.display = 'none';
+                }
+                renderTable();
+                renderLeaderboard();
+                updateNotifications();
+                showToast('Вы вышли');
+            }
+
+            function registerUser(username, password) {
+                if (!username || !password) { showToast('Заполните все поля'); return false; }
+                if (users.find(u => u.username === username)) { showToast('Пользователь уже существует'); return false; }
+                users.push({ username, password, isAdmin: false });
+                saveData();
+                showToast(`Пользователь ${username} зарегистрирован!`);
+                login(username, password);
+                registerModal.classList.remove('open');
+                return true;
+            }
+
+            // ----- TOAST -----
+            function showToast(msg) {
+                toastEl.textContent = msg;
+                toastEl.classList.remove('hidden');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => toastEl.classList.add('hidden'), 3000);
+            }
+
+            // ----- NOTIFICATIONS DROPDOWN -----
+            notifBell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifDropdown.classList.toggle('open');
+                if (notifDropdown.classList.contains('open')) {
+                    updateNotifications();
+                }
+            });
+
+            document.addEventListener('click', () => {
+                notifDropdown.classList.remove('open');
+            });
+
+            clearNotifsBtn.addEventListener('click', () => {
+                if (isAdmin) {
+                    notifications = notifications.filter(n => n.status === 'pending');
+                } else {
+                    notifications = notifications.filter(n => n.username !== currentUser);
+                }
+                saveData();
+                showToast('Уведомления очищены');
+            });
+
+            // ----- VICTOR VIDEO MODAL -----
+            closeVictorVideoModal.addEventListener('click', () => {
+                victorVideoModal.classList.remove('open');
+                victorVideoIframe.src = '';
+            });
+            victorVideoModal.addEventListener('click', (e) => {
+                if (e.target === victorVideoModal) {
+                    victorVideoModal.classList.remove('open');
+                    victorVideoIframe.src = '';
+                }
+            });
+
+            // ----- USER PROFILE MODAL -----
+            closeUserProfileModal.addEventListener('click', () => {
+                userProfileModal.classList.remove('open');
+            });
+            userProfileModal.addEventListener('click', (e) => {
+                if (e.target === userProfileModal) {
+                    userProfileModal.classList.remove('open');
+                }
+            });
+
+            // ----- ИНИЦИАЛИЗАЦИЯ -----
+            loadData();
+
+            // Обработчики
+            loginBtn.addEventListener('click', () => login(loginInput.value.trim(), passInput.value.trim()));
+
+            registerBtn.addEventListener('click', () => {
+                registerModal.classList.add('open');
+                regLogin.value = '';
+                regPassword.value = '';
+            });
+
+            closeRegisterModal.addEventListener('click', () => {
+                registerModal.classList.remove('open');
+            });
+
+            registerModal.addEventListener('click', (e) => {
+                if (e.target === registerModal) registerModal.classList.remove('open');
+            });
+
+            registerConfirmBtn.addEventListener('click', () => {
+                registerUser(regLogin.value.trim(), regPassword.value.trim());
+            });
+
+            regLogin.addEventListener('keydown', (e) => { if (e.key === 'Enter') regPassword.focus(); });
+            regPassword.addEventListener('keydown', (e) => { if (e.key === 'Enter') registerConfirmBtn.click(); });
+
+            logoutBtn.addEventListener('click', logout);
+
+            addBtn.addEventListener('click', () => {
+                if (!isAdmin) { showToast('Требуется авторизация'); return; }
+                addLevel(nameInp.value, authorInp.value, posInp.value, videoInp.value);
+            });
+
+            addVictorBtn.addEventListener('click', () => addVictor(victorInput.value, victorVideoInput.value));
+            victorInput.addEventListener('keydown', e => { if (e.key === 'Enter') addVictorBtn.click(); });
+            victorVideoInput.addEventListener('keydown', e => { if (e.key === 'Enter') addVictorBtn.click(); });
+
+            sendRequestBtn.addEventListener('click', sendRequest);
+            requestVideo.addEventListener('keydown', e => { if (e.key === 'Enter') sendRequest(); });
+
+            closeLevelPageBtn.addEventListener('click', closeLevelPage);
+            goHomeBtn.addEventListener('click', closeLevelPage);
+
+            document.querySelectorAll('#levelName, #levelAuthor, #levelPosition, #levelVideo').forEach(inp => {
+                inp.addEventListener('keydown', e => { if (e.key === 'Enter') addBtn.click(); });
+            });
+
+            const origSave = saveData;
+            saveData = function() {
+                origSave();
+                if (currentLevelId) {
+                    const level = levels.find(l => l.id === currentLevelId);
+                    if (level) renderVictors(level.victors || []);
+                }
+            };
+
+            renderTable();
+            renderLeaderboard();
+        })();
+    </script>
 </body>
 </html>
