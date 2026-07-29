@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GD Demon List · темы + админка</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ----- CSS Variables (темы) ----- */
+    :root {
+      --bg-body: #0b0d15;
+      --bg-surface: #1a1e2b;
+      --bg-surface2: #141926;
+      --bg-input: #10131f;
+      --bg-table-alt: #11161f;
+      --bg-hover: #2d3555;
+      --border-color: #2c324a;
+      --border-light: #3d445e;
+      --text-primary: #e8edf5;
+      --text-secondary: #b0bedd;
+      --text-muted: #5d6a8f;
+      --text-inverse: #0b0d15;
+      --accent: #ff7eb3;
+      --accent-hover: #ff5177;
+      --shadow: rgba(0,0,0,0.6);
+      --btn-bg: #2f3650;
+      --btn-border: #3f4668;
+      --badge-bg: #2a3150;
+      --danger: #c73b4b;
+      --danger-hover: #b02c3c;
+      --success: #2b8c5e;
+      --success-hover: #1f734b;
+      --input-border: #323a57;
+      --toast-bg: #1f263b;
+      --toast-border: #ff7eb3;
+      --table-header: #1b212f;
+      --table-border: #1e253b;
+      --gradient-start: #ff7eb3;
+      --gradient-end: #ff758c;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f2f4fa;
+      --bg-surface: #ffffff;
+      --bg-surface2: #f0f2f8;
+      --bg-input: #ffffff;
+      --bg-table-alt: #f8f9fe;
+      --bg-hover: #e6e9f2;
+      --border-color: #d0d5e0;
+      --border-light: #c2c8d6;
+      --text-primary: #1a1f2e;
+      --text-secondary: #3c445e;
+      --text-muted: #7a85a5;
+      --text-inverse: #ffffff;
+      --accent: #d94f7a;
+      --accent-hover: #c43d67;
+      --shadow: rgba(0,0,0,0.08);
+      --btn-bg: #e2e6f0;
+      --btn-border: #c8cedc;
+      --badge-bg: #dde2ef;
+      --danger: #b52c3c;
+      --danger-hover: #9e2332;
+      --success: #1f7a4e;
+      --success-hover: #16633e;
+      --input-border: #ccd2e0;
+      --toast-bg: #ffffff;
+      --toast-border: #d94f7a;
+      --table-header: #e9ecf5;
+      --table-border: #d8dce8;
+      --gradient-start: #d94f7a;
+      --gradient-end: #c73b6b;
+    }
+
+    /* ----- общие стили ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s, box-shadow 0.2s;
+    }
+    body {
+      background: var(--bg-body);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 1200px;
+      width: 100%;
+    }
+    /* header */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--bg-surface);
+      border-radius: 32px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 24px var(--shadow);
+      border: 1px solid var(--border-color);
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    .logo i {
+      background: none;
+      -webkit-text-fill-color: var(--accent);
+      margin-right: 8px;
+    }
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .auth-section {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .auth-section input {
+      padding: 8px 14px;
+      border-radius: 40px;
+      border: 1px solid var(--input-border);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      outline: none;
+      width: 140px;
+    }
+    .auth-section input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 126, 179, 0.2);
+    }
+    .btn {
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      padding: 8px 18px;
+      border-radius: 40px;
+      color: var(--text-primary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--text-inverse);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: scale(1.02);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-light);
+    }
+    .btn-outline:hover {
+      background: var(--bg-hover);
+    }
+    .btn-danger {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: white;
+    }
+    .btn-danger:hover {
+      background: var(--danger-hover);
+    }
+    .btn-success {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+    .btn-success:hover {
+      background: var(--success-hover);
+    }
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border-light);
+      border-radius: 40px;
+      padding: 8px 14px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .theme-toggle:hover {
+      background: var(--bg-hover);
+    }
+
+    .admin-panel {
+      background: var(--bg-surface2);
+      border-radius: 28px;
+      padding: 24px;
+      margin-bottom: 30px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    .admin-panel h3 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+    .admin-panel h3 i {
+      color: var(--accent);
+    }
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+      align-items: flex-end;
+    }
+    .form-group {
+      flex: 1 0 160px;
+      min-width: 140px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 40px;
+      border: 1px solid var(--input-border);
+      background: var(--bg-input);
+      color: var(--text-primary);
+    }
+    .form-group input:focus {
+      border-color: var(--accent);
+      outline: none;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 20px;
+      background: var(--bg-table-alt);
+      padding: 4px;
+      border: 1px solid var(--border-color);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    th {
+      text-align: left;
+      padding: 16px 12px;
+      background: var(--table-header);
+      color: var(--text-secondary);
+      font-weight: 500;
+      border-bottom: 1px solid var(--table-border);
+    }
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--table-border);
+      vertical-align: middle;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    .level-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .level-author {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    .position-badge {
+      background: var(--badge-bg);
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-block;
+    }
+    .actions i {
+      margin: 0 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      padding: 6px;
+      border-radius: 30px;
+      background: var(--bg-surface);
+      width: 32px;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+    .actions i:hover {
+      background: var(--bg-hover);
+      color: var(--accent);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-muted);
+    }
+    .footer {
+      margin-top: 30px;
+      color: var(--text-muted);
+      font-size: 14px;
+      text-align: center;
+    }
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--toast-bg);
+      padding: 14px 24px;
+      border-radius: 60px;
+      border-left: 6px solid var(--toast-border);
+      box-shadow: 0 12px 30px var(--shadow);
+      font-weight: 500;
+      color: var(--text-primary);
+      z-index: 999;
+      transform: translateY(0);
+      opacity: 1;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .toast.hidden {
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+    }
+    /* мобильная адаптация */
+    @media (max-width: 700px) {
+      .header { flex-direction: column; align-items: stretch; gap: 12px; }
+      .header-controls { flex-direction: column; align-items: stretch; }
+      .auth-section { flex-wrap: wrap; }
+      .auth-section input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="app">
+  <!-- Шапка -->
+  <header class="header">
+    <div class="logo"><i class="fas fa-skull"></i> Demon List</div>
+    <div class="header-controls">
+      <div class="auth-section" id="authSection">
+        <input type="text" id="loginInput" placeholder="Логин" value="admin">
+        <input type="password" id="passInput" placeholder="Пароль" value="123">
+        <button class="btn btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Вход</button>
+        <button class="btn btn-outline" id="logoutBtn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+      </div>
+      <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span id="themeLabel">Тёмная</span></button>
+    </div>
+  </header>
+
+  <!-- Админ панель (видна только авторизованным) -->
+  <div class="admin-panel" id="adminPanel" style="display:none;">
+    <h3><i class="fas fa-crown"></i> Админ-панель · управление уровнями</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Название уровня</label>
+        <input type="text" id="levelName" placeholder="e.g. Bloodbath" value="Bloodbath">
+      </div>
+      <div class="form-group">
+        <label>Автор</label>
+        <input type="text" id="levelAuthor" placeholder="Riot" value="Riot">
+      </div>
+      <div class="form-group">
+        <label>Позиция (число)</label>
+        <input type="number" id="levelPosition" placeholder="1" value="1">
+      </div>
+      <button class="btn btn-success" id="addLevelBtn"><i class="fas fa-plus"></i> Добавить</button>
+    </div>
+    <div style="margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap;">
+      <small style="color:var(--text-muted);"><i class="fas fa-info-circle"></i> Для удаления / изменения позиции — нажмите на иконки в таблице.</small>
+    </div>
+  </div>
+
+  <!-- Таблица уровней -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Уровень</th>
+          <th>Автор</th>
+          <th>Позиция</th>
+          <th style="text-align:center;">Действия</th>
+        </tr>
+      </thead>
+      <tbody id="levelTableBody">
+        <!-- рендерится через JS -->
+      </tbody>
+    </table>
+  </div>
+  <div class="footer">
+    <i class="fas fa-code-branch"></i> Данные хранятся в JSON · Редактирование через GitHub (симуляция)
+  </div>
+</div>
+
+<!-- Toast уведомление -->
+<div id="toast" class="toast hidden">Уведомление</div>
+
+<script>
+  (function() {
+    "use strict";
+
+    // ----- ТЕМА (dark/light) -----
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+    const html = document.documentElement;
+    let currentTheme = localStorage.getItem('gd-theme') || 'dark';
+    html.setAttribute('data-theme', currentTheme);
+    updateThemeLabel(currentTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('gd-theme', next);
+      updateThemeLabel(next);
+    });
+
+    function updateThemeLabel(theme) {
+      themeLabel.textContent = theme === 'dark' ? 'Тёмная' : 'Светлая';
+      themeToggle.innerHTML = `<i class="fas ${theme === 'dark' ? 'fa-moon' : 'fa-sun'}"></i> <span id="themeLabel">${theme === 'dark' ? 'Тёмная' : 'Светлая'}</span>`;
+    }
+
+    // ----- СОСТОЯНИЕ -----
+    // Имитация базы данных (храним в localStorage для постоянства)
+    let levels = [];
+    let isAdmin = false; // авторизация
+
+    // DOM ссылки
+    const tbody = document.getElementById('levelTableBody');
+    const adminPanel = document.getElementById('adminPanel');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginInput = document.getElementById('loginInput');
+    const passInput = document.getElementById('passInput');
+    const addBtn = document.getElementById('addLevelBtn');
+    const nameInp = document.getElementById('levelName');
+    const authorInp = document.getElementById('levelAuthor');
+    const posInp = document.getElementById('levelPosition');
+    const toastEl = document.getElementById('toast');
+    let toastTimeout = null;
+
+    // Загружаем данные из localStorage или используем дефолтные
+    function loadData() {
+      const stored = localStorage.getItem('gd_demon_levels');
+      if (stored) {
+        try {
+          levels = JSON.parse(stored);
+          return;
+        } catch (_) {}
+      }
+      // дефолтный список
+      levels = [
+        { id: 1, name: 'Bloodbath', author: 'Riot', position: 1 },
+        { id: 2, name: 'Sonic Wave', author: 'Cyclic', position: 2 },
+        { id: 3, name: 'Cataclysm', author: 'Ggb0y', position: 3 },
+        { id: 4, name: 'Aftermath', author: 'Kaba', position: 4 },
+      ];
+      saveData();
+    }
+
+    function saveData() {
+      localStorage.setItem('gd_demon_levels', JSON.stringify(levels));
+      renderTable();
+    }
+
+    // Генерация ID
+    function genId() {
+      return levels.length ? Math.max(...levels.map(l => l.id)) + 1 : 1;
+    }
+
+    // ----- РЕНДЕР ТАБЛИЦЫ -----
+    function renderTable() {
+      if (!tbody) return;
+      // сортировка по позиции
+      const sorted = [...levels].sort((a, b) => a.position - b.position);
+      if (sorted.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-state"><i class="fas fa-ghost"></i> Нет уровней. Добавьте первый!</td></tr>`;
+        return;
+      }
+      let html = '';
+      sorted.forEach((level, index) => {
+        const realPos = level.position;
+        html += `<tr>
+          <td><span class="position-badge">${index + 1}</span></td>
+          <td><span class="level-name">${escapeHtml(level.name)}</span></td>
+          <td><span class="level-author">${escapeHtml(level.author)}</span></td>
+          <td>${realPos}</td>
+          <td style="text-align:center;" class="actions">
+            ${isAdmin ? `
+              <i class="fas fa-arrow-up" data-action="moveUp" data-id="${level.id}" title="Повысить позицию"></i>
+              <i class="fas fa-arrow-down" data-action="moveDown" data-id="${level.id}" title="Понизить позицию"></i>
+              <i class="fas fa-trash-alt" data-action="delete" data-id="${level.id}" style="color: var(--danger);" title="Удалить"></i>
+            ` : `
+              <span style="color:var(--text-muted); font-size:13px;"><i class="fas fa-lock"></i> авторизуйтесь</span>
+            `}
+          </td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+
+      // вешаем события на кнопки (только если админ)
+      if (isAdmin) {
+        document.querySelectorAll('[data-action]').forEach(el => {
+          el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const action = this.dataset.action;
+            const id = parseInt(this.dataset.id);
+            if (action === 'delete') {
+              deleteLevel(id);
+            } else if (action === 'moveUp') {
+              moveLevel(id, -1);
+            } else if (action === 'moveDown') {
+              moveLevel(id, 1);
+            }
+          });
+        });
+      }
+    }
+
+    // вспомогательный escape
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ----- CRUD -----
+    function addLevel(name, author, position) {
+      if (!name.trim() || !author.trim()) {
+        showToast('Заполните название и автора');
+        return false;
+      }
+      const pos = parseInt(position);
+      if (isNaN(pos) || pos < 1) {
+        showToast('Позиция должна быть числом >= 1');
+        return false;
+      }
+      // проверяем уникальность позиции (но можно и дубли, но для демо лучше предупредим)
+      const exist = levels.some(l => l.position === pos);
+      if (exist) {
+        showToast(`Позиция ${pos} уже занята. Используйте другую.`);
+        return false;
+      }
+      const newLevel = {
+        id: genId(),
+        name: name.trim(),
+        author: author.trim(),
+        position: pos
+      };
+      levels.push(newLevel);
+      saveData();
+      showToast(`Уровень "${name}" добавлен!`);
+      return true;
+    }
+
+    function deleteLevel(id) {
+      if (!isAdmin) { showToast('Требуется авторизация'); return; }
+      const level = levels.find(l => l.id === id);
+      if (!level) return;
+      if (!confirm(`Удалить уровень "${level.name}"?`)) return;
+      levels = levels.filter(l => l.id !== id);
+      saveData();
+      showToast(`Уровень "${level.name}" удалён`);
+    }
+
+    function moveLevel(id, direction) {
+      if (!isAdmin) { showToast('Требуется авторизация'); return; }
+      const index = levels.findIndex(l => l.id === id);
+      if (index === -1) return;
+      const current = levels[index];
+      // ищем уровень с позицией current.position + direction
+      const targetPos = current.position + direction;
+      const targetIndex = levels.findIndex(l => l.position === targetPos);
+      if (targetIndex === -1) {
+        // если нет цели — ничего не делаем
+        showToast('Нет уровня для обмена позицией');
+        return;
+      }
+      // меняем позиции
+      const target = levels[targetIndex];
+      [current.position, target.position] = [target.position, current.position];
+      saveData();
+      showToast(`Позиция обновлена: ${current.name} ↔ ${target.name}`);
+    }
+
+    // ----- АВТОРИЗАЦИЯ (простая, для демо) -----
+    function login(username, password) {
+      // фикс логин/пароль
+      if (username === 'admin' && password === '123') {
+        isAdmin = true;
+        document.getElementById('loginBtn').style.display = 'none';
+        document.getElementById('logoutBtn').style.display = 'inline-flex';
+        adminPanel.style.display = 'block';
+        renderTable();
+        showToast('Добро пожаловать, администратор!');
+        return true;
+      } else {
+        showToast('Неверный логин или пароль');
+        return false;
+      }
+    }
+
+    function logout() {
+      isAdmin = false;
+      document.getElementById('loginBtn').style.display = 'inline-flex';
+      document.getElementById('logoutBtn').style.display = 'none';
+      adminPanel.style.display = 'none';
+      renderTable();
+      showToast('Вы вышли из админ-панели');
+    }
+
+    // ----- TOAST -----
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.remove('hidden');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toastEl.classList.add('hidden');
+      }, 3000);
+    }
+
+    // ----- ИНИЦИАЛИЗАЦИЯ -----
+    loadData();
+
+    // если была сохранена сессия? нет, просто по умолчанию не админ
+    // но если хотим тестово — можно закомментировать:
+    // isAdmin = true; adminPanel.style.display = 'block'; renderTable(); // для быстрого теста
+
+    // обработчики
+    loginBtn.addEventListener('click', () => {
+      const user = loginInput.value.trim();
+      const pass = passInput.value.trim();
+      login(user, pass);
+    });
+
+    logoutBtn.addEventListener('click', logout);
+
+    addBtn.addEventListener('click', () => {
+      if (!isAdmin) { showToast('Требуется авторизация'); return; }
+      const name = nameInp.value.trim();
+      const author = authorInp.value.trim();
+      const pos = posInp.value.trim();
+      if (addLevel(name, author, pos)) {
+        nameInp.value = '';
+        authorInp.value = '';
+        posInp.value = '';
+      }
+    });
+
+    // также Enter на полях
+    document.querySelectorAll('#levelName, #levelAuthor, #levelPosition').forEach(inp => {
+      inp.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') addBtn.click();
+      });
+    });
+
+    // Если уже админ — показать панель (но мы не храним сессию)
+    // для демо просто оставим как есть.
+
+    // при загрузке рендер
+    renderTable();
+
+    // если вдруг захотим включить админку по умолчанию - раскомментировать:
+    // isAdmin = true; adminPanel.style.display = 'block'; loginBtn.style.display = 'none'; logoutBtn.style.display = 'inline-flex'; renderTable();
+
+    // Поддержка темы при загрузке (уже есть)
+
+    // Для демонстрации "регистрация" не реализована, но есть логин.
+    console.log('GD Demon List · темы + админка (данные в localStorage)');
+  })();
+</script>
+</body>
+</html>
